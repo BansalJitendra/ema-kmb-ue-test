@@ -1,9 +1,9 @@
-/* Live Kotak footer: white background, dark text, multi-column link layout.
-   The authored footer content collapses into a single default-content-wrapper
-   (a flat run of H3 + P/UL groups), so the columns are produced with CSS
-   multi-column flow rather than grid cells. */
+/* Live Kotak footer: light grey background, dark text, multi-column link
+   layout. The authored footer content collapses into a single
+   default-content-wrapper (a flat run of H3 + P/UL groups), so the columns are
+   produced with CSS multi-column flow rather than grid cells. */
 footer {
-  background-color: #fff;
+  background-color: #ececed;
   color: var(--text-color);
   font-size: var(--body-font-size-xs);
   border-top: 1px solid #e8ebf4;
