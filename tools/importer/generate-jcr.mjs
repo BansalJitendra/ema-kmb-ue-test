@@ -79,6 +79,93 @@ function normalizeContent(document) {
   });
 }
 
+// Junk text from the source desktop hero icon-nav / autoplay controls that
+// leaked into the loose hero sequence.
+const HERO_JUNK = /^(home|learn|help|get app|personal|business|nri|about us|prev|next|×|x|)$/i;
+
+/**
+ * The source homepage hero is a JS slider whose slides flattened into a loose
+ * run of <h1>/<h2> + <p> + CTA <p> + image <p> elements at the very top of the
+ * page (no block wrapper) — so it renders as a tall stack instead of one slide.
+ *
+ * Detect that leading run, group it into slides (each starts at a heading),
+ * drop the junk/control elements, de-duplicate repeated slides (autoplay
+ * clones), and replace the whole run with a `carousel-banner` block table:
+ * one row per slide, cells = [image, heading+text+cta]. Returns true if it ran.
+ */
+function wrapLooseHero(document, blockMeta) {
+  if (!blockMeta['carousel-banner']) return false;
+  const main = document.querySelector('main') || document.body;
+  const wrapper = main.querySelector('main > div, div');
+  if (!wrapper) return false;
+  const kids = [...wrapper.children];
+
+  // The loose hero ends at the first real block div (e.g. .hero-promo/.cards-*).
+  let end = kids.findIndex((el) => el.tagName === 'DIV' && el.classList.length === 1 && blockMeta[el.classList[0]]);
+  if (end <= 0) return false;
+  const run = kids.slice(0, end);
+  // Only treat as hero if the run actually contains slide headings + images.
+  const headingCount = run.filter((el) => /^H[12]$/.test(el.tagName)).length;
+  if (headingCount < 1) return false;
+
+  // Group into slides: a new slide starts at each H1/H2.
+  const slides = [];
+  let cur = null;
+  run.forEach((el) => {
+    const txt = el.textContent.trim().replace(/\s+/g, ' ');
+    const img = el.querySelector('img');
+    if (/^H[12]$/.test(el.tagName)) {
+      cur = { heading: el, parts: [el], img: null };
+      slides.push(cur);
+    } else if (!cur) {
+      // leading junk before first heading — skip
+    } else if (img) {
+      if (!cur.img) cur.img = img;
+    } else if (!HERO_JUNK.test(txt)) {
+      cur.parts.push(el);
+    }
+  });
+  if (slides.length === 0) return false;
+
+  // De-duplicate slides by heading text (autoplay clones repeat them).
+  const seen = new Set();
+  const unique = slides.filter((s) => {
+    const key = s.heading.textContent.trim().replace(/\s+/g, ' ');
+    if (seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+
+  // Build the carousel-banner authoring table: header + one row per slide,
+  // each row = [ image cell , heading+text+cta cell ].
+  const table = document.createElement('table');
+  const htr = document.createElement('tr');
+  const htd = document.createElement('td');
+  htd.setAttribute('colspan', '2');
+  htd.textContent = 'Carousel Banner';
+  htr.appendChild(htd);
+  table.appendChild(htr);
+
+  unique.forEach((s) => {
+    const tr = document.createElement('tr');
+    const imgTd = document.createElement('td');
+    if (s.img) {
+      const p = document.createElement('p');
+      p.appendChild(s.img.cloneNode(true));
+      imgTd.appendChild(p);
+    }
+    const txtTd = document.createElement('td');
+    s.parts.forEach((p) => txtTd.appendChild(p.cloneNode(true)));
+    tr.appendChild(imgTd);
+    tr.appendChild(txtTd);
+    table.appendChild(tr);
+  });
+
+  // Remove the original loose run and insert the carousel at the top.
+  run.forEach((el) => el.remove());
+  wrapper.insertBefore(table, wrapper.firstChild);
+  return true;
+}
+
 function convertBlockDivsToTables(document, blockMeta) {
   // Block divs carry exactly one class equal to a known component id. They are
   // nested inside section wrapper divs, so scan the whole document (not just
@@ -197,6 +284,7 @@ async function main() {
         // preprocess: convert EDS block divs into authoring tables md2jcr understands
         const dom = new JSDOM(wrapped);
         normalizeContent(dom.window.document);
+        wrapLooseHero(dom.window.document, blockMeta);
         convertBlockDivsToTables(dom.window.document, blockMeta);
         hadBlocks = !!dom.window.document.querySelector('table');
         const html = dom.serialize();
