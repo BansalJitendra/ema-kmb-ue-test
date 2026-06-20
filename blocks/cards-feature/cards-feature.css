@@ -24,6 +24,13 @@
   flex-direction: column;
 }
 
+/* Live shows 6 cards per view in the products slider below "Need Help?" (the
+   rest sit on later slides). Cap any card grid to 6 to match that visible
+   count; smaller grids (3/2/4 cards) are unaffected. */
+.cards-feature > ul > li:nth-child(n+7) {
+  display: none;
+}
+
 .cards-feature .cards-feature-card-image {
   line-height: 0;
 }

@@ -49,6 +49,12 @@
   display: none;
 }
 
+/* Live shows 5 tiles per view (the 6th sits on the next slide). Match that
+   visible count by hiding tiles beyond the fifth. */
+.carousel-icons .carousel-icons-slide:nth-child(n+6) {
+  display: none;
+}
+
 .carousel-icons .carousel-icons-slide .carousel-icons-slide-image {
   flex: 0 0 auto;
   position: static;
