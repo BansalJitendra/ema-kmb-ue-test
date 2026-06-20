@@ -262,13 +262,19 @@ header nav .nav-sections ul > li > ul > li {
     position: relative;
   }
 
+  /* Megamenu panel: the dropdown holds category groups (each a heading + a
+     list of links). Lay the groups out as wrapping columns rather than a
+     single 240px column, and reset the inherited flex so they stack/flow. */
   header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
     position: absolute;
     left: -24px;
-    width: 240px;
+    width: max-content;
+    max-width: 80vw;
     top: 150%;
-    padding: 16px;
+    padding: 20px 24px;
     background-color: #fff;
     border-top: 3px solid var(--brand-primary);
     box-shadow: 0 6px 16px rgb(15 52 100 / 12%);
@@ -288,8 +294,32 @@ header nav .nav-sections ul > li > ul > li {
     border-bottom: 8px solid var(--light-color);
   }
 
+  /* each category group is a fixed-width column */
   header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
+    flex: 0 0 auto;
+    width: 180px;
     padding: 8px 0;
+  }
+
+  /* category group heading (the leading <p>) */
+  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > p {
+    margin: 0 0 8px;
+    font-weight: 700;
+    color: var(--brand-secondary);
+  }
+
+  /* leaf links list: stack vertically (override the inherited horizontal flex
+     used by the top-level menu bar) */
+  /* stylelint-disable-next-line no-descending-specificity */
+  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > ul {
+    display: block;
+    gap: 0;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > ul > li {
+    padding: 4px 0;
+    font-weight: 400;
+    white-space: nowrap;
   }
 }
 
