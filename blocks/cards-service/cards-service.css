@@ -1,0 +1,46 @@
+.cards-service > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
+  gap: 24px;
+}
+
+.cards-service > ul > li {
+  border: 1px solid #dadada;
+  background-color: var(--background-color, #fff);
+  display: flex;
+  flex-direction: column;
+}
+
+.cards-service .cards-service-card-body {
+  margin: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* text-only service cards: title + description + Know more CTA */
+.cards-service .cards-service-card-body :is(h2, h3, h4) {
+  margin: 0;
+  font-size: var(--heading-font-size-s, 20px);
+}
+
+.cards-service .cards-service-card-body p {
+  margin: 0;
+}
+
+.cards-service .cards-service-card-body a {
+  font-weight: 600;
+}
+
+.cards-service .cards-service-card-image {
+  line-height: 0;
+}
+
+.cards-service > ul > li img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}

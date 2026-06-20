@@ -1,0 +1,44 @@
+{
+  "variantName": "carousel-gallery",
+  "baseBlock": "carousel",
+  "version": "1.0.0",
+  "created": "2026-06-19T05:32:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/about-us/careers.html",
+    "originPage": "Careers landing page (section-landing-tabbed)",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "gallery",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "image (repeating image-only slides)",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "image-only photo galleries with prev/next arrows and pagination dots",
+      "After Hours / event / culture photo sliders",
+      "rotating image showcases with no overlaid text"
+    ],
+    "notSuitableFor": [
+      "banners with heading/subheading/CTA content slides (use carousel-banner or carousel-promo)",
+      "icon + title quick-action rows (use carousel-icons)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "/en/about-us/careers",
+      "/en/about-us/executive-leadership"
+    ],
+    "reuseCount": 2,
+    "lastUsed": "2026-06-19T06:59:09.798Z",
+    "sectionsOnPage": [
+      5
+    ]
+  }
+}

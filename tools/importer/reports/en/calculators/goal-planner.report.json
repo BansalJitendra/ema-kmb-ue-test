@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/calculators/goal-planner.html",
+  "path": "en/calculators/goal-planner",
+  "timestamp": "2026-06-19T08:37:10.644Z",
+  "title": "Goal Planner: Online Calculator for all - Kotak Mahindra Bank",
+  "template": "calculator-form-carousel",
+  "blocks": [
+    "carousel-promo"
+  ]
+}

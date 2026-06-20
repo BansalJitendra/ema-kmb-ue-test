@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/customer-service/grievance-redressal.html",
+  "path": "en/customer-service/grievance-redressal",
+  "timestamp": "2026-06-19T08:47:42.146Z",
+  "title": "Grievance Redressal for Bank Services by Kotak Mahindra Bank",
+  "template": "service-carousel-form",
+  "blocks": [
+    "cards-contact",
+    "cards-icon-tile",
+    "carousel-promo",
+    "carousel-promo"
+  ]
+}

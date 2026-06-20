@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/reach-us.html",
+  "path": "en/reach-us",
+  "timestamp": "2026-06-19T08:52:20.951Z",
+  "title": "Kotak Bank Contact Details, Branch/ATM Address & IFSC Code - Reach Us 24 x 7 Helpline",
+  "template": "locator-cards-tabs",
+  "blocks": [
+    "cards-feature",
+    "cards-feature"
+  ]
+}

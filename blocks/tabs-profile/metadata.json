@@ -1,0 +1,41 @@
+{
+  "variantName": "tabs-profile",
+  "baseBlock": "tabs",
+  "version": "1.0.0",
+  "created": "2026-06-19T06:58:18.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/about-us/executive-leadership.html",
+    "originPage": "Executive Leadership (about-us)",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "profile-switcher",
+    "imagePattern": "thumbnail"
+  },
+  "contentPattern": {
+    "structure": "thumbnail tab nav + per-leader profile panel (portrait + name + role + bio)",
+    "tabCount": 4,
+    "imageCount": 4
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "leadership / executive / board profile switchers",
+      "team member or person-profile tabbed panels with portrait + bio",
+      "single-active-panel content switchers where each tab reveals a rich profile"
+    ],
+    "notSuitableFor": [
+      "simple text-label tab switchers without portraits",
+      "carousels / rotating galleries (use a carousel variant)",
+      "accordion-style stacked expandable content"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "/en/about-us/executive-leadership"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T06:58:18.000Z"
+  }
+}

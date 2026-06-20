@@ -1,0 +1,39 @@
+{
+  "variantName": "hero-helpline",
+  "baseBlock": "hero",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/customer-service/grievance-redressal.html",
+    "originPage": "Grievance Redressal customer service page",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "accent",
+    "density": "spacious",
+    "purpose": "helpline-banner",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "large phone-number heading + tagline on solid brand color",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "full-bleed solid-color helpline / contact banners",
+      "toll-free number announcement banners with a tagline",
+      "service-page intro banners on the brand accent color without a background photo"
+    ],
+    "notSuitableFor": [
+      "promotional banners with a background photo (use hero-promo)",
+      "rotating banner carousels (use carousel-promo / carousel-banner)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/customer-service/grievance-redressal"],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T00:00:00.000Z",
+    "sectionsOnPage": [1]
+  }
+}

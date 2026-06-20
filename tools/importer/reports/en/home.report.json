@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/home.html",
+  "path": "en/home",
+  "timestamp": "2026-06-19T08:49:00.265Z",
+  "title": "Savings Accounts, Personal Loans and Credit Cards - Kotak Mahindra Bank",
+  "template": "homepage",
+  "blocks": [
+    "hero-promo",
+    "form",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "carousel-promo",
+    "columns-media",
+    "carousel-icons",
+    "accordion-rates"
+  ]
+}

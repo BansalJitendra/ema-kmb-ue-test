@@ -1,0 +1,40 @@
+{
+  "variantName": "carousel-banner",
+  "baseBlock": "carousel",
+  "version": "1.0.0",
+  "created": "2026-06-19T05:32:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/about-us/careers.html",
+    "originPage": "Careers landing page (section-landing-tabbed)",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "spacious",
+    "purpose": "promo-banner",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "background image + heading + subheading + 2 CTAs",
+    "buttonCount": 2,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "dark full-width hero/banner carousels with content slides",
+      "landing-page top banners with heading + subheading + multiple CTAs over a dark background image",
+      "rotating promotional banners (2+ slides) on a dark theme"
+    ],
+    "notSuitableFor": [
+      "light promo banners (use carousel-promo)",
+      "image-only photo galleries (use carousel-gallery)",
+      "repeating icon/title quick-action rows (use carousel-icons)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/about-us/careers"],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T05:32:00.000Z",
+    "sectionsOnPage": [1]
+  }
+}

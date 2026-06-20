@@ -1,0 +1,39 @@
+{
+  "variantName": "carousel-icons",
+  "baseBlock": "carousel",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/home.html",
+    "originPage": "Kotak Mahindra Bank homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "quick-actions",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "icon + title + one-line description (repeating items)",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "horizontal quick-action / help shortcut strips",
+      "icon-led navigation sliders (contact, locate, complaint, etc.)",
+      "compact icon+text item carousels"
+    ],
+    "notSuitableFor": [
+      "full-bleed promotional banner carousels (use carousel-promo)",
+      "image-heavy feature grids (use cards-feature)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/home", "/en/calculators/emi-calculator"],
+    "reuseCount": 2,
+    "lastUsed": "2026-06-19T00:00:00.000Z",
+    "sectionsOnPage": [7, 1]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "variantName": "carousel-promo",
+  "baseBlock": "carousel",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/home.html",
+    "originPage": "Kotak Mahindra Bank homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "promo-banner",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "background image + heading + subheading + CTA",
+    "buttonCount": 1,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "wide promotional banner carousels",
+      "rotating campaign/offer banners with overlaid text and CTA",
+      "hero-style sliding banners"
+    ],
+    "notSuitableFor": [
+      "compact icon/quick-action sliders (use carousel-icons)",
+      "static feature grids (use cards-feature)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/home", "/en/calculators/emi-calculator", "/en/customer-service/grievance-redressal"],
+    "reuseCount": 3,
+    "lastUsed": "2026-06-19T00:00:00.000Z",
+    "sectionsOnPage": [3, 2, 6]
+  }
+}

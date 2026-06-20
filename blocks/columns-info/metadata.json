@@ -1,0 +1,39 @@
+{
+  "variantName": "columns-info",
+  "baseBlock": "columns",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/customer-service/grievance-redressal.html",
+    "originPage": "Grievance Redressal customer service page",
+    "blockPosition": "lower-middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "info-content",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "prominent label/heading | descriptive paragraph with contact details (two-up, text only)",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "text-only two-column informational layouts (label + paragraph)",
+      "side-by-side heading/wordmark plus descriptive copy sections",
+      "DigiSaathi-style helpline/info callouts without imagery"
+    ],
+    "notSuitableFor": [
+      "image + text storytelling sections (use columns-media)",
+      "repeating card grids (use cards-* variants)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/customer-service/grievance-redressal"],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T00:00:00.000Z",
+    "sectionsOnPage": [5]
+  }
+}

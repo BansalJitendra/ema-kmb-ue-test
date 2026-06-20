@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/investor-relations/financial-results.html",
+  "path": "en/investor-relations/financial-results",
+  "timestamp": "2026-06-19T08:49:54.327Z",
+  "title": "Financial Results | Investor Relations - Kotak Mahindra Bank",
+  "template": "report-carousel-tabs",
+  "blocks": [
+    "tabs-profile"
+  ]
+}

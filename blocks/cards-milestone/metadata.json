@@ -1,0 +1,39 @@
+{
+  "variantName": "cards-milestone",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-06-19T05:32:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/about-us/careers.html",
+    "originPage": "Careers landing page (section-landing-tabbed)",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "grey",
+    "density": "moderate",
+    "purpose": "milestones",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "icon + year + short description (repeating items)",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "timeline / milestone rows (icon + year + short description)",
+      "icon-led fact or achievement grids",
+      "compact 3-4 column item rows on a grey/light section"
+    ],
+    "notSuitableFor": [
+      "large image feature cards with eyebrow + heading + CTA (use cards-feature)",
+      "side-by-side image + text storytelling (use columns-media)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/about-us/careers"],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T05:32:00.000Z",
+    "sectionsOnPage": [6]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "sites": {
+    "ema-kmb-ue-test": {
+      "previewOrg": "bansaljitendra",
+      "previewSite": "ema-kmb-ue-test",
+      "contentHostUrl": "author-p121857-e1908603.adobeaemcloud.com",
+      "libraryUrl": "https://main--sta-xwalk-boilerplate--aemysites.aem.page/tools/sidekick/library.json"
+    }
+  },
+  "type": "xwalk"
+}

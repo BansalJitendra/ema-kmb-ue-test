@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/solitaire/business/get-started.html",
+  "path": "en/solitaire/business/get-started",
+  "timestamp": "2026-06-19T08:53:13.726Z",
+  "title": "Get Started – Kotak Mahindra Bank",
+  "template": "getstarted-columns-search",
+  "blocks": [
+    "columns-media",
+    "form"
+  ]
+}

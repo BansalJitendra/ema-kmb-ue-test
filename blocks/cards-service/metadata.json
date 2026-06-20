@@ -1,0 +1,39 @@
+{
+  "variantName": "cards-service",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/customer-service/contact-us.html",
+    "originPage": "Contact Us (text-content-page template)",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "grey",
+    "density": "moderate",
+    "purpose": "service",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "heading + text + CTA",
+    "buttonCount": 1,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "text-only service/support card sets (title + description + Know more link)",
+      "grievance/redressal or help-topic card grids on a grey section",
+      "3-up informational cards with a single CTA and no image"
+    ],
+    "notSuitableFor": [
+      "image-led feature/product tiles (use cards-feature)",
+      "timeline/milestone icon rows (use cards-milestone)",
+      "rotating image banners (use carousel variants)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/customer-service/contact-us"],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T00:00:00.000Z"
+  }
+}

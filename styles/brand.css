@@ -1,0 +1,29 @@
+:root {
+  /* fonts */
+  --heading-font-family: "Roboto", "Roboto-fallback", sans-serif;
+  --body-font-family: "Roboto", "Roboto-fallback", sans-serif;
+
+  /* brand colors */
+  --background-color: #fff;
+  --text-color: #333;
+  --link-color: #0f3464;
+  --link-hover-color: #fa1432;
+  --brand-primary: #fa1432;
+  --brand-secondary: #0f3464;
+  --brand-secondary-soft: #e8ebf4;
+  --light-color: #f4f4f4;
+  --dark-color: #0f3464;
+
+  /* spacing */
+  --section-padding: 32px;
+  --content-max-width: 1200px;
+  --nav-height: 50px;
+
+  /* heading sizes (desktop) */
+  --heading-size-xxl: 44px;
+  --heading-size-xl: 36px;
+  --heading-size-l: 28px;
+  --heading-size-m: 24px;
+  --heading-size-s: 20px;
+  --heading-size-xs: 18px;
+}

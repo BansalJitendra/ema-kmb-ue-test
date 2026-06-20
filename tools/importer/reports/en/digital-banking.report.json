@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/digital-banking.html",
+  "path": "en/digital-banking",
+  "timestamp": "2026-06-19T08:48:22.025Z",
+  "title": "Digital Banking - Kotak Bank",
+  "template": "hub-landing-tabbed",
+  "blocks": [
+    "carousel-promo",
+    "tabs-profile"
+  ]
+}

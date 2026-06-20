@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/business/loans/business-loan.html",
+  "path": "en/business/loans/business-loan",
+  "timestamp": "2026-06-19T08:36:20.140Z",
+  "title": "Business Loan up to ₹1 Crore | Collateral-Free | Kotak Mahindra Bank",
+  "template": "product-detail-form-accordion",
+  "blocks": [
+    "tabs-profile",
+    "accordion-rates",
+    "carousel-promo",
+    "carousel-promo"
+  ]
+}

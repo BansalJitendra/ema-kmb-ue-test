@@ -1,0 +1,40 @@
+{
+  "variantName": "cards-icon-tile",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/customer-service/grievance-redressal.html",
+    "originPage": "Grievance Redressal customer service page",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "product-selector",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "icon + short label tile (repeating selectable items, no description)",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "bordered icon + label tile grids used as product/service selectors",
+      "category navigation tile grids where each tile is a linked icon + short label",
+      "compact icon-led selection grids on a light section"
+    ],
+    "notSuitableFor": [
+      "cards with descriptive body text and CTAs (use cards-contact or cards-feature)",
+      "image-forward product/feature tiles (use cards-feature)",
+      "rotating icon strips (use carousel-icons)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/customer-service/grievance-redressal"],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T00:00:00.000Z",
+    "sectionsOnPage": [3]
+  }
+}

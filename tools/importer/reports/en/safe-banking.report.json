@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/safe-banking.html",
+  "path": "en/safe-banking",
+  "timestamp": "2026-06-19T08:48:38.359Z",
+  "title": "Safe Banking",
+  "template": "hub-landing-tabbed",
+  "blocks": [
+    "carousel-promo"
+  ]
+}

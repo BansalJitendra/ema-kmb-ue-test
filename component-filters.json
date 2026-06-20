@@ -28,9 +28,45 @@
     ]
   },
   {
+    "id": "accordion-rates",
+    "components": [
+      "accordion-rates-item"
+    ]
+  },
+  {
     "id": "accordion",
     "components": [
       "accordion-item"
+    ]
+  },
+  {
+    "id": "cards-contact",
+    "components": [
+      "cards-contact-card"
+    ]
+  },
+  {
+    "id": "cards-feature",
+    "components": [
+      "cards-feature-card"
+    ]
+  },
+  {
+    "id": "cards-icon-tile",
+    "components": [
+      "cards-icon-tile-card"
+    ]
+  },
+  {
+    "id": "cards-milestone",
+    "components": [
+      "cards-milestone-card"
+    ]
+  },
+  {
+    "id": "cards-service",
+    "components": [
+      "cards-service-card"
     ]
   },
   {
@@ -40,9 +76,63 @@
     ]
   },
   {
+    "id": "carousel-banner",
+    "components": [
+      "carousel-banner-item"
+    ]
+  },
+  {
+    "id": "carousel-gallery",
+    "components": [
+      "carousel-gallery-item"
+    ]
+  },
+  {
+    "id": "carousel-icons",
+    "components": [
+      "carousel-icons-item"
+    ]
+  },
+  {
+    "id": "carousel-promo",
+    "components": [
+      "carousel-promo-item"
+    ]
+  },
+  {
     "id": "carousel",
     "components": [
       "carousel-item"
+    ]
+  },
+  {
+    "id": "columns-info",
+    "components": [
+      "columns-info-column"
+    ]
+  },
+  {
+    "id": "columns-info-column",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title"
+    ]
+  },
+  {
+    "id": "columns-media",
+    "components": [
+      "columns-media-column"
+    ]
+  },
+  {
+    "id": "columns-media-column",
+    "components": [
+      "text",
+      "image",
+      "button",
+      "title"
     ]
   },
   {
@@ -82,6 +172,12 @@
     "id": "table-4-columns",
     "components": [
       "table-col-4"
+    ]
+  },
+  {
+    "id": "tabs-profile",
+    "components": [
+      "tabs-profile-item"
     ]
   },
   {

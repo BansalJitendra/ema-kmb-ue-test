@@ -1,0 +1,41 @@
+{
+  "variantName": "hero-promo",
+  "baseBlock": "hero",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/home.html",
+    "originPage": "Kotak Mahindra Bank homepage",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "spacious",
+    "purpose": "promo-banner",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "heading + text + CTA + background image",
+    "buttonCount": 1,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "homepage hero banners",
+      "full-bleed promotional banners with background imagery",
+      "campaign landing intros with a primary CTA"
+    ],
+    "notSuitableFor": [
+      "text-only intros on light backgrounds",
+      "minimal heros without background images"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "/en/home",
+      "/en/about-us/executive-leadership"
+    ],
+    "reuseCount": 2,
+    "lastUsed": "2026-06-19T06:59:09.798Z"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "variantName": "accordion-rates",
+  "baseBlock": "accordion",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/home.html",
+    "originPage": "Kotak Mahindra Bank homepage",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "rates",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "titled header + collapsible rows (label + rate values)",
+    "buttonCount": 1,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "rates & charges panels",
+      "expandable category/value listings (deposits, savings, loans)",
+      "FAQ-style collapsible content"
+    ],
+    "notSuitableFor": [
+      "tabbed content switchers (use tabs)",
+      "static feature grids (use cards-feature)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/home"],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T00:00:00.000Z",
+    "sectionsOnPage": [9]
+  }
+}

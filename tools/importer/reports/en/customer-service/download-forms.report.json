@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/customer-service/download-forms.html",
+  "path": "en/customer-service/download-forms",
+  "timestamp": "2026-06-19T08:37:23.908Z",
+  "title": "Download Form for Products &amp; Services by Kotak Mahindra Bank",
+  "template": "calculator-form-carousel",
+  "blocks": [
+    "carousel-promo"
+  ]
+}

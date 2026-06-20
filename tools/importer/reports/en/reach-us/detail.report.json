@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/reach-us/detail.html",
+  "path": "en/reach-us/detail",
+  "timestamp": "2026-06-19T08:47:48.497Z",
+  "title": "Reach Us Detail",
+  "template": "service-carousel-form",
+  "blocks": [
+    "carousel-promo"
+  ]
+}

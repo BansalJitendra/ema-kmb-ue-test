@@ -1,0 +1,40 @@
+{
+  "variantName": "cards-contact",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/customer-service/grievance-redressal.html",
+    "originPage": "Grievance Redressal customer service page",
+    "blockPosition": "upper-middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "grey",
+    "density": "moderate",
+    "purpose": "contact-levels",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "icon + level heading + description + CTA link (repeating items)",
+    "buttonCount": 1,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "escalation / contact-level grids (Level 1/2/3 with icon, heading, description, link)",
+      "icon-led help or support card rows with a call-to-action link",
+      "3-up contact/redressal cards on a grey or light section"
+    ],
+    "notSuitableFor": [
+      "text-only service cards without icons (use cards-service)",
+      "image-forward product/feature tiles (use cards-feature)",
+      "compact icon+label navigation tiles with no description (use cards-icon-tile)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/customer-service/grievance-redressal"],
+    "reuseCount": 1,
+    "lastUsed": "2026-06-19T00:00:00.000Z",
+    "sectionsOnPage": [2]
+  }
+}

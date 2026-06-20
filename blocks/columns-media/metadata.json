@@ -1,0 +1,39 @@
+{
+  "variantName": "columns-media",
+  "baseBlock": "columns",
+  "version": "1.0.0",
+  "created": "2026-06-19T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.kotak.bank.in/en/home.html",
+    "originPage": "Kotak Mahindra Bank homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "brand-content",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "large image | heading + descriptive paragraph",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "side-by-side image + text brand/campaign content",
+      "two-column informational layouts",
+      "media-plus-copy storytelling sections"
+    ],
+    "notSuitableFor": [
+      "repeating product/feature grids (use cards-feature)",
+      "rotating banners (use carousel-promo)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en/home", "/en/about-us/careers", "/en/solitaire/business/get-started"],
+    "reuseCount": 3,
+    "lastUsed": "2026-06-19T07:00:00.000Z",
+    "sectionsOnPage": [5, 6, 1]
+  }
+}

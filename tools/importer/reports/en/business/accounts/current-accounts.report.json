@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "url": "https://www.kotak.bank.in/en/business/accounts/current-accounts.html",
+  "path": "en/business/accounts/current-accounts",
+  "timestamp": "2026-06-19T08:32:23.302Z",
+  "title": "Current Account Online Opening | Apply Now – Kotak Bank",
+  "template": "profile-carousel-tabs",
+  "blocks": [
+    "tabs-profile",
+    "tabs-profile"
+  ]
+}
