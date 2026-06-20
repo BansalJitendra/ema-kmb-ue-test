@@ -79,6 +79,22 @@ function createSlide(row, slideIndex, carouselId) {
 
   row.querySelectorAll(':scope > div').forEach((column, colIdx) => {
     column.classList.add(`carousel-banner-slide-${colIdx === 0 ? 'image' : 'content'}`);
+    // External image URLs come through as a link to an image file (EDS only
+    // builds <picture> for ingested same-origin media). Convert such links in
+    // the image column into a real <img> so the slide renders its banner.
+    if (colIdx === 0) {
+      column.querySelectorAll('a[href]').forEach((link) => {
+        if (/\.(jpe?g|png|webp|gif|svg)(\?|$)/i.test(link.getAttribute('href'))) {
+          const img = document.createElement('img');
+          img.src = link.getAttribute('href');
+          img.alt = link.textContent.trim();
+          img.loading = 'eager';
+          const picture = document.createElement('picture');
+          picture.append(img);
+          link.replaceWith(picture);
+        }
+      });
+    }
     slide.append(column);
   });
 

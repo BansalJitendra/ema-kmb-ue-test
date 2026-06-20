@@ -79,6 +79,21 @@ function createSlide(row, slideIndex, carouselId) {
 
   row.querySelectorAll(':scope > div').forEach((column, colIdx) => {
     column.classList.add(`carousel-icons-slide-${colIdx === 0 ? 'image' : 'content'}`);
+    // External icon image URLs arrive as a link to an image file; convert to
+    // <img> so the icon renders (EDS only builds <picture> for ingested media).
+    if (colIdx === 0) {
+      column.querySelectorAll('a[href]').forEach((link) => {
+        if (/\.(jpe?g|png|webp|gif|svg)(\?|$)/i.test(link.getAttribute('href'))) {
+          const img = document.createElement('img');
+          img.src = link.getAttribute('href');
+          img.alt = link.textContent.trim();
+          img.loading = 'lazy';
+          const picture = document.createElement('picture');
+          picture.append(img);
+          link.replaceWith(picture);
+        }
+      });
+    }
     slide.append(column);
   });
 
