@@ -9,11 +9,14 @@
   padding: 0;
 }
 
+/* Quick-action icon strip: show all items in one row (like the live "Need
+   Help?" strip), not a one-at-a-time slider. */
 .carousel-icons .carousel-icons-slides {
   display: flex;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-  overflow: scroll clip;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  overflow: visible;
 }
 
 .carousel-icons .carousel-icons-slides::-webkit-scrollbar {
@@ -21,15 +24,22 @@
 }
 
 .carousel-icons .carousel-icons-slide {
-  flex: 0 0 100%;
+  flex: 1 1 140px;
+  max-width: 200px;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
-  width: 100%;
+  width: auto;
   min-height: auto;
+}
+
+/* Single-row strip doesn't need prev/next arrows or slide dots. */
+.carousel-icons .carousel-icons-navigation-buttons,
+.carousel-icons .carousel-icons-slide-indicators {
+  display: none;
 }
 
 .carousel-icons .carousel-icons-slide:has(.carousel-icons-slide-content[data-align='center']) {

@@ -20,48 +20,35 @@
   display: none;
 }
 
+/* Thin promo banner: the slide sizes to its banner image (no forced tall
+   min-height, no dark text overlay) — matches the live ~18%-of-width banner. */
 .carousel-promo .carousel-promo-slide {
   flex: 0 0 100%;
   scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  display: block;
   position: relative;
   width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
+  min-height: 0;
   border-radius: 12px;
   overflow: hidden;
 }
 
-.carousel-promo .carousel-promo-slide:has(.carousel-promo-slide-content[data-align='center']) {
-  align-items: center;
-}
-
-.carousel-promo .carousel-promo-slide:has(.carousel-promo-slide-content[data-align='right']) {
-  align-items: flex-end;
-}
-
 .carousel-promo .carousel-promo-slide .carousel-promo-slide-image picture {
-  position: absolute;
-  inset: 0;
+  position: static;
+  display: block;
 }
 
 .carousel-promo .carousel-promo-slide .carousel-promo-slide-image picture > img {
-  height: 100%;
   width: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   border-radius: 12px;
+  display: block;
 }
 
+/* No dark text overlay on the promo banner — the artwork carries the message. */
 .carousel-promo .carousel-promo-slide .carousel-promo-slide-content {
-  z-index: 1;
-  margin: 68px;
-  padding: 16px;
-  color: white;
-  background-color: rgb(19 19 19 / 75%);
-  position: relative;
-  width: var(--slide-content-width, auto);
+  display: none;
 }
 
 .carousel-promo .carousel-promo-slide-indicators {

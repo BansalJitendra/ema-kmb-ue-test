@@ -66,6 +66,25 @@ const BAD_ALT = /^(image is broken|img\d*|productC[Aa]rd|logo|)$/i;
 function normalizeContent(document) {
   const main = document.querySelector('main') || document.body;
 
+  // 0. strip leaked JS modal/disclaimer dialogs. The source renders hidden
+  // redirect-disclaimer popups ("×" / "Disclaimer" / legal blurb / "Proceed"
+  // | "I Accept") that flattened into loose paragraphs. Remove any paragraph
+  // that is just a close glyph, the word "Disclaimer", or the disclaimer
+  // sentence, plus their associated Proceed/I-Accept links.
+  const DISCLAIMER_RE = /^(×|x|Disclaimer|Proceed|I Accept|Note: Available in select banks)/i;
+  const LEAVE_SENTENCE = /you will be leaving|re-directed to a third party|Kotak Cards does not guarantee/i;
+  main.querySelectorAll('p').forEach((p) => {
+    const t = p.textContent.trim();
+    if (DISCLAIMER_RE.test(t) || LEAVE_SENTENCE.test(t)) {
+      // only strip the bare close glyph / disclaimer scaffolding, and the
+      // redirect "Proceed"/"I Accept" CTA paragraphs that accompany them.
+      if (t === '×' || t === 'x' || /^Disclaimer$/i.test(t) || LEAVE_SENTENCE.test(t)
+          || (/^(Proceed|I Accept)$/i.test(t)) || /^Note: Available in select banks/i.test(t)) {
+        p.remove();
+      }
+    }
+  });
+
   // 1. placeholder alt cleanup
   main.querySelectorAll('img[alt]').forEach((img) => {
     if (BAD_ALT.test(img.getAttribute('alt').trim())) {
