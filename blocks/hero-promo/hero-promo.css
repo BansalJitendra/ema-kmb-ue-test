@@ -60,3 +60,30 @@
     padding: 40px 32px;
   }
 }
+
+/* When this promo instance has no background image, the white-on-image text
+   styling renders invisible on the page background and the 300px min-height
+   leaves a tall empty gap after the hero. Collapse the height and use dark
+   text so the promo reads as a normal banner instead of whitespace. */
+.hero-promo:not(:has(img)) {
+  min-height: 0;
+  padding: 24px;
+  text-align: center;
+}
+
+/* stylelint-disable no-descending-specificity */
+.hero-promo:not(:has(img)) h1,
+.hero-promo:not(:has(img)) h2,
+.hero-promo:not(:has(img)) h4 {
+  color: var(--brand-secondary);
+}
+
+.hero-promo:not(:has(img)) p {
+  color: var(--text-color);
+}
+
+.hero-promo:not(:has(img)) > div > div:empty,
+.hero-promo:not(:has(img)) > div:first-child:empty {
+  display: none;
+}
+/* stylelint-enable no-descending-specificity */
