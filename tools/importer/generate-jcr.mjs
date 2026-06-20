@@ -240,6 +240,51 @@ function wrapLooseHero(document, blockMeta) {
   return true;
 }
 
+/**
+ * The page's SEO metadata is authored as `<div class="metadata">` with
+ * key/value rows (Title, Description, Image, og:title). md2jcr only lifts
+ * metadata into page properties (jcr:title, jcr:description, …) when it sees a
+ * block TABLE whose header cell is "Metadata"; a bare div is otherwise rendered
+ * as visible body text. Convert each metadata div into that 2-column table so
+ * the page-helper hoists it into <jcr:content> and drops it from the body.
+ */
+function convertMetadataToTable(document) {
+  const main = document.querySelector('main') || document.body;
+  main.querySelectorAll('div.metadata').forEach((meta) => {
+    const rows = [...meta.children].filter((c) => c.tagName === 'DIV');
+    const table = document.createElement('table');
+
+    const headerTr = document.createElement('tr');
+    const headerTd = document.createElement('td');
+    headerTd.setAttribute('colspan', '2');
+    headerTd.textContent = 'Metadata';
+    headerTr.appendChild(headerTd);
+    table.appendChild(headerTr);
+
+    rows.forEach((row) => {
+      const cells = [...row.children].filter((c) => c.tagName === 'DIV');
+      const key = (cells[0] ? cells[0].textContent : '').trim();
+      const tr = document.createElement('tr');
+      const keyTd = document.createElement('td');
+      keyTd.textContent = key;
+      const valTd = document.createElement('td');
+      if (cells[1]) while (cells[1].firstChild) valTd.appendChild(cells[1].firstChild);
+      tr.appendChild(keyTd);
+      tr.appendChild(valTd);
+      table.appendChild(tr);
+      // The importer's default rule auto-builds a Metadata block from the
+      // document <title>; align it with the authored Title so jcr:title isn't
+      // overwritten with the wrapper path.
+      if (key.toLowerCase() === 'title') document.title = valTd.textContent.trim();
+    });
+
+    // replace the whole metadata block wrapper (outer div) with the table
+    const wrapper = meta.parentElement && meta.parentElement.children.length === 1
+      ? meta.parentElement : meta;
+    wrapper.replaceWith(table);
+  });
+}
+
 function convertBlockDivsToTables(document, blockMeta) {
   // Block divs carry exactly one class equal to a known component id. They are
   // nested inside section wrapper divs, so scan the whole document (not just
@@ -353,12 +398,21 @@ async function main() {
       const wrapped = `<!DOCTYPE html><html><head><title>${rel}</title></head><body><main>${fragment}</main></body></html>`;
       const opts = { createDocumentFromString: (s) => new JSDOM(s).window.document };
 
+      // Default-content HTML: cleaned + metadata lifted, but no block tables.
+      // Used by the fallback path so even pages whose blocks fail validation
+      // still get metadata hoisted into page properties (not visible body text).
+      const fallbackDom = new JSDOM(wrapped);
+      normalizeContent(fallbackDom.window.document);
+      convertMetadataToTable(fallbackDom.window.document);
+      const fallbackHtml = fallbackDom.serialize();
+
       let result;
       let hadBlocks = false;
       try {
         // preprocess: convert EDS block divs into authoring tables md2jcr understands
         const dom = new JSDOM(wrapped);
         normalizeContent(dom.window.document);
+        convertMetadataToTable(dom.window.document);
         wrapLooseHero(dom.window.document, blockMeta);
         convertBlockDivsToTables(dom.window.document, blockMeta);
         hadBlocks = !!dom.window.document.querySelector('table');
@@ -369,7 +423,7 @@ async function main() {
       } catch (blockErr) {
         // Fallback: a block failed model validation. Render the page as default
         // content (no block tables) so it still produces valid JCR.
-        const res = await md2jcr(url, wrapped, undefined, opts, { components });
+        const res = await md2jcr(url, fallbackHtml, undefined, opts, { components });
         result = Array.isArray(res) ? res[0] : res;
         if (!result || !result.jcr) throw blockErr;
         hadBlocks = false;
