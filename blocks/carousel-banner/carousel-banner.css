@@ -1,3 +1,16 @@
+/* Full-bleed hero: break out of the 1200px section wrapper to span the viewport
+   like the live site's hero banner. */
+.carousel-banner-wrapper {
+  max-width: none;
+  padding: 0;
+}
+
+.carousel-banner {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
 .carousel-banner .carousel-banner-slides-container {
   position: relative;
 }
@@ -29,7 +42,14 @@
   justify-content: center;
   position: relative;
   width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
+  min-height: 38vw; /* live hero ~548px at 1440px wide (~38% of width) */
+  max-height: 600px;
+}
+
+@media (width >= 1440px) {
+  .carousel-banner .carousel-banner-slide {
+    min-height: 548px;
+  }
 }
 
 .carousel-banner .carousel-banner-slide:has(.carousel-banner-slide-content[data-align='center']) {
