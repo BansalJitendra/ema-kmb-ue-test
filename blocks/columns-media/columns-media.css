@@ -19,11 +19,26 @@
   display: block;
 }
 
+.columns-media h4,
+.columns-media h3 {
+  color: var(--brand-secondary);
+  font-weight: 600;
+}
+
+.columns-media a:any-link {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+.columns-media a:hover {
+  text-decoration: underline;
+}
+
 @media (width >= 900px) {
   .columns-media > div {
-    align-items: center;
+    align-items: flex-start;
     flex-direction: unset;
-    gap: 24px;
+    gap: 32px;
   }
 
   .columns-media > div > div {

@@ -30,6 +30,8 @@
   position: relative;
   width: 100%;
   min-height: min(50vw, calc(100dvh - var(--header-height)));
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .carousel-promo .carousel-promo-slide:has(.carousel-promo-slide-content[data-align='center']) {
@@ -49,6 +51,7 @@
   height: 100%;
   width: 100%;
   object-fit: cover;
+  border-radius: 12px;
 }
 
 .carousel-promo .carousel-promo-slide .carousel-promo-slide-content {
@@ -151,3 +154,9 @@
     --slide-content-width: auto;
   }
 }
+
+/* Kotak promo banner — the artwork carries the message; hide empty overlay. */
+.carousel-promo .carousel-promo-slide .carousel-promo-slide-content:empty {
+  display: none;
+}
+
