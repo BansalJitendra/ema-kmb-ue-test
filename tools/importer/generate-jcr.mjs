@@ -66,6 +66,51 @@ const BAD_ALT = /^(image is broken|img\d*|productC[Aa]rd|logo|)$/i;
 function normalizeContent(document) {
   const main = document.querySelector('main') || document.body;
 
+  // 0a. strip lazy-load placeholder images (loader.gif) that the source emits
+  // for not-yet-loaded media. They have no content value and render as a stray
+  // spinner. Remove the img and any now-empty <picture>/<p> wrapper around it.
+  main.querySelectorAll('img[src*="loader.gif"]').forEach((img) => {
+    const picture = img.closest('picture');
+    const wrapper = (picture || img).closest('p');
+    (picture || img).remove();
+    if (wrapper && wrapper.textContent.trim() === '' && !wrapper.querySelector('img, picture, a, svg')) {
+      wrapper.remove();
+    }
+  });
+
+  // Some pages leak the loader.gif (and other clientlib icon assets) as bare
+  // anchor links to the asset URL rather than images. Drop those links; if that
+  // empties their <li>/<p> wrapper, drop the wrapper too.
+  main.querySelectorAll('a[href*="loader.gif"]').forEach((a) => {
+    const wrapper = a.closest('li, p');
+    a.remove();
+    if (wrapper && wrapper.textContent.trim() === '' && !wrapper.querySelector('img, picture, a, svg')) {
+      wrapper.remove();
+    }
+  });
+
+  // Strip leaked markdown reference-definition junk: a malformed source list
+  // sometimes flattens trailing `[imageN]: https://…asset` reference defs into
+  // literal text. Remove that text run (and any element left empty) so it
+  // doesn't render as a wall of stray URLs.
+  // Reference-definition labels can run together with no whitespace
+  // (`…next.svg[image14]: https://…prev.svg[image15]: https://…loader.gif`),
+  // so the URL portion must stop before the next `[imageN]:` label, not just at
+  // the next space.
+  const IMG_REF_DEF = /\[image\d+\]:\s*https?:\/\/(?:(?!\[image\d+\]:).)*/gi;
+  const IMG_REF_USE = /!\[[^\]]*\]\[image\d+\]/gi;
+  const IMG_REF_TEST = /(\[image\d+\]:\s*https?:\/\/)|(!\[[^\]]*\]\[image\d+\])/i;
+  const walker = document.createTreeWalker(main, 0x4 /* SHOW_TEXT */);
+  const textNodes = [];
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    if (IMG_REF_TEST.test(n.nodeValue)) textNodes.push(n);
+  }
+  textNodes.forEach((n) => {
+    n.nodeValue = n.nodeValue.replace(IMG_REF_DEF, '').replace(IMG_REF_USE, '').trim();
+    const el = n.parentElement;
+    if (el && el.textContent.trim() === '' && !el.querySelector('img, picture, a, svg')) el.remove();
+  });
+
   // 0. strip leaked JS modal/disclaimer dialogs. The source renders hidden
   // redirect-disclaimer popups ("×" / "Disclaimer" / legal blurb / "Proceed"
   // | "I Accept") that flattened into loose paragraphs. Remove any paragraph
