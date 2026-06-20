@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
+  <jcr:content cq:template="/libs/core/franklin/templates/page" sling:resourceType="core/franklin/components/page/v1/page" jcr:primaryType="cq:PageContent">
+    <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
+      <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Adobe Code of Conduct" titleType="h1"/>
+        <title_1 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Our Pledge" titleType="h2"/>
+        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;In the interest of fostering an open and welcoming environment, we as
+                    contributors and maintainers pledge to making participation in our project and
+                    our community a harassment-free experience for everyone, regardless of age, body
+                    size, disability, ethnicity, gender identity and expression, level of experience,
+                    nationality, personal appearance, race, religion, or sexual identity and
+                    orientation.&lt;/p&gt;"/>
+        <title_2 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Our Standards" titleType="h2"/>
+        <text_1 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;Examples of behavior that contributes to creating a positive environment
+                    include:&lt;/p&gt;&lt;ul&gt;
+                    &lt;li&gt;Using welcoming and inclusive language&lt;/li&gt;
+                    &lt;li&gt;Being respectful of differing viewpoints and experiences&lt;/li&gt;
+                    &lt;li&gt;Gracefully accepting constructive criticism&lt;/li&gt;
+                    &lt;li&gt;Focusing on what is best for the community&lt;/li&gt;
+                    &lt;li&gt;Showing empathy towards other community members&lt;/li&gt;
+                    &lt;/ul&gt;&lt;p&gt;Examples of unacceptable behavior by participants include:&lt;/p&gt;&lt;ul&gt;
+                    &lt;li&gt;The use of sexualized language or imagery and unwelcome sexual attention or
+                    advances&lt;/li&gt;
+                    &lt;li&gt;Trolling, insulting/derogatory comments, and personal or political attacks&lt;/li&gt;
+                    &lt;li&gt;Public or private harassment&lt;/li&gt;
+                    &lt;li&gt;Publishing others&#x27; private information, such as a physical or electronic
+                    address, without explicit permission&lt;/li&gt;
+                    &lt;li&gt;Other conduct which could reasonably be considered inappropriate in a
+                    professional setting&lt;/li&gt;
+                    &lt;/ul&gt;"/>
+        <title_3 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Our Responsibilities" titleType="h2"/>
+        <text_2 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;Project maintainers are responsible for clarifying the standards of acceptable
+                    behavior and are expected to take appropriate and fair corrective action in
+                    response to any instances of unacceptable behavior.&lt;/p&gt;&lt;p&gt;Project maintainers have the right and responsibility to remove, edit, or
+                    reject comments, commits, code, wiki edits, issues, and other contributions
+                    that are not aligned to this Code of Conduct, or to ban temporarily or
+                    permanently any contributor for other behaviors that they deem inappropriate,
+                    threatening, offensive, or harmful.&lt;/p&gt;"/>
+        <title_4 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Scope" titleType="h2"/>
+        <text_3 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;This Code of Conduct applies both within project spaces and in public spaces
+                    when an individual is representing the project or its community. Examples of
+                    representing a project or community include using an official project e-mail
+                    address, posting via an official social media account, or acting as an appointed
+                    representative at an online or offline event. Representation of a project may be
+                    further defined and clarified by project maintainers.&lt;/p&gt;"/>
+        <title_5 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Enforcement" titleType="h2"/>
+        <text_4 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;Instances of abusive, harassing, or otherwise unacceptable behavior may be
+                    reported by contacting the project team at &lt;a href&#x3D;&quot;mailto:Grp-opensourceoffice@adobe.com&quot;&gt;Grp-opensourceoffice@adobe.com&lt;/a&gt;. All
+                    complaints will be reviewed and investigated and will result in a response that
+                    is deemed necessary and appropriate to the circumstances. The project team is
+                    obligated to maintain confidentiality with regard to the reporter of an incident.
+                    Further details of specific enforcement policies may be posted separately.&lt;/p&gt;&lt;p&gt;Project maintainers who do not follow or enforce the Code of Conduct in good
+                    faith may face temporary or permanent repercussions as determined by other
+                    members of the project&#x27;s leadership.&lt;/p&gt;"/>
+        <title_6 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Attribution" titleType="h2"/>
+        <text_5 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;This Code of Conduct is adapted from the &lt;a href&#x3D;&quot;http://contributor-covenant.org&quot;&gt;Contributor Covenant&lt;/a&gt;, version 1.4,
+                    available at &lt;a href&#x3D;&quot;http://contributor-covenant.org/version/1/4/&quot;&gt;http://contributor-covenant.org/version/1/4&lt;/a&gt;&lt;/p&gt;"/>
+      </section>
+    </root>
+  </jcr:content>
+</jcr:root>

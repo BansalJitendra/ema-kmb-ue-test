@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
+  <jcr:content cq:template="/libs/core/franklin/templates/page" sling:resourceType="core/franklin/components/page/v1/page" jcr:primaryType="cq:PageContent">
+    <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
+      <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Your Project&#x27;s Title..." titleType="h1"/>
+        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;Your project&#x27;s description...&lt;/p&gt;"/>
+        <title_1 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Environments" titleType="h2"/>
+        <text_1 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;ul&gt;
+                    &lt;li&gt;Preview: &lt;a href&#x3D;&quot;https://main--%7Brepo%7D--%7Bowner%7D.aem.page/&quot;&gt;https://main--{repo}--{owner}.aem.page/&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;Live: &lt;a href&#x3D;&quot;https://main--%7Brepo%7D--%7Bowner%7D.aem.live/&quot;&gt;https://main--{repo}--{owner}.aem.live/&lt;/a&gt;&lt;/li&gt;
+                    &lt;/ul&gt;"/>
+        <title_2 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Documentation" titleType="h2"/>
+        <text_2 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;Before using the aem-block-collection, we recommand you to go through the documentation on &lt;a href&#x3D;&quot;https://www.aem.live/docs/&quot;&gt;https://www.aem.live/docs/&lt;/a&gt; and more specifically:&lt;/p&gt;&lt;ol&gt;
+                    &lt;li&gt;&lt;a href&#x3D;&quot;https://www.aem.live/developer/ue-tutorial&quot;&gt;Developer Tutorial&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href&#x3D;&quot;https://www.aem.live/developer/universal-editor-blocks&quot;&gt;Creating Blocks&lt;/a&gt; and &lt;a href&#x3D;&quot;https://www.aem.live/developer/component-model-definitions&quot;&gt;Content Modelling&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href&#x3D;&quot;https://www.aem.live/developer/anatomy-of-a-project&quot;&gt;The Anatomy of a Project&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href&#x3D;&quot;https://www.aem.live/developer/keeping-it-100&quot;&gt;Web Performance&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href&#x3D;&quot;https://www.aem.live/developer/markup-sections-blocks&quot;&gt;Markup, Sections, Blocks, and Auto Blocking&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href&#x3D;&quot;https://www.aem.live/developer/block-collection#block-collection-1&quot;&gt;AEM Block Collection&lt;/a&gt;&lt;/li&gt;
+                    &lt;/ol&gt;"/>
+        <title_3 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Installation" titleType="h2"/>
+        <text_3 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;pre&gt;&lt;code class&#x3D;&quot;language-sh&quot;&gt;npm i
+                    &lt;/code&gt;&lt;/pre&gt;"/>
+        <title_4 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Linting" titleType="h2"/>
+        <text_4 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;pre&gt;&lt;code class&#x3D;&quot;language-sh&quot;&gt;npm run lint
+                    &lt;/code&gt;&lt;/pre&gt;"/>
+        <title_5 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Local development" titleType="h2"/>
+        <text_5 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;ol&gt;
+                    &lt;li&gt;Create a new repository based on the &lt;code&gt;aem-block-collection&lt;/code&gt; template and add a mountpoint in the &lt;code&gt;fstab.yaml&lt;/code&gt;&lt;/li&gt;
+                    &lt;li&gt;Add the &lt;a href&#x3D;&quot;https://github.com/apps/aem-code-sync&quot;&gt;AEM Code Sync GitHub App&lt;/a&gt; to the repository&lt;/li&gt;
+                    &lt;li&gt;Install the &lt;a href&#x3D;&quot;https://github.com/adobe/helix-cli&quot;&gt;AEM CLI&lt;/a&gt;: &lt;code&gt;npm install -g @adobe/aem-cli&lt;/code&gt;&lt;/li&gt;
+                    &lt;li&gt;Start AEM Proxy: &lt;code&gt;aem up&lt;/code&gt; (opens your browser at &lt;code&gt;http://localhost:3000&lt;/code&gt;)&lt;/li&gt;
+                    &lt;li&gt;Open the &lt;code&gt;{repo}&lt;/code&gt; directory in your favorite IDE and start coding :)&lt;/li&gt;
+                    &lt;/ol&gt;"/>
+      </section>
+    </root>
+  </jcr:content>
+</jcr:root>

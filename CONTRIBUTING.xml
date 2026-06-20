@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
+  <jcr:content cq:template="/libs/core/franklin/templates/page" sling:resourceType="core/franklin/components/page/v1/page" jcr:primaryType="cq:PageContent">
+    <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
+      <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Contributing to Project Helix" titleType="h1"/>
+        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;This project (like almost all of Project Helix) is an Open Development project and welcomes contributions from everyone who finds it useful or lacking.&lt;/p&gt;"/>
+        <title_1 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Code Of Conduct" titleType="h2"/>
+        <text_1 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;This project adheres to the Adobe &lt;a href&#x3D;&quot;CODE_OF_CONDUCT.md&quot;&gt;code of conduct&lt;/a&gt;. By participating, you are expected to uphold this code. Please report unacceptable behavior to cstaub at adobe dot com.&lt;/p&gt;"/>
+        <title_2 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Contributor License Agreement" titleType="h2"/>
+        <text_2 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;All third-party contributions to this project must be accompanied by a signed contributor license. This gives Adobe permission to redistribute your contributions as part of the project. &lt;a href&#x3D;&quot;http://opensource.adobe.com/cla.html&quot;&gt;Sign our CLA&lt;/a&gt;! You only need to submit an Adobe CLA one time, so if you have submitted one previously, you are good to go!&lt;/p&gt;"/>
+        <title_3 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Things to Keep in Mind" titleType="h2"/>
+        <text_3 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;This project uses a &lt;strong&gt;commit then review&lt;/strong&gt; process, which means that for approved maintainers, changes can be merged immediately, but will be reviewed by others.&lt;/p&gt;&lt;p&gt;For other contributors, a maintainer of the project has to approve the pull request.&lt;/p&gt;"/>
+        <title_4 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Before You Contribute" titleType="h1"/>
+        <text_4 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;ul&gt;
+                    &lt;li&gt;Check that there is an existing issue in GitHub issues&lt;/li&gt;
+                    &lt;li&gt;Check if there are other pull requests that might overlap or conflict with your intended contribution&lt;/li&gt;
+                    &lt;/ul&gt;"/>
+        <title_5 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="How to Contribute" titleType="h1"/>
+        <text_5 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;ol&gt;
+                    &lt;li&gt;Fork the repository&lt;/li&gt;
+                    &lt;li&gt;Make some changes on a branch on your fork&lt;/li&gt;
+                    &lt;li&gt;Create a pull request from your branch&lt;/li&gt;
+                    &lt;/ol&gt;&lt;p&gt;In your pull request, outline:&lt;/p&gt;&lt;ul&gt;
+                    &lt;li&gt;What the changes intend&lt;/li&gt;
+                    &lt;li&gt;How they change the existing code&lt;/li&gt;
+                    &lt;li&gt;If (and what) they breaks&lt;/li&gt;
+                    &lt;li&gt;Start the pull request with the GitHub issue ID, e.g. #123&lt;/li&gt;
+                    &lt;/ul&gt;&lt;p&gt;Lastly, please follow the &lt;a href&#x3D;&quot;.github/pull_request_template.md&quot;&gt;pull request template&lt;/a&gt; when submitting a pull request!&lt;/p&gt;&lt;p&gt;Each commit message that is not part of a pull request:&lt;/p&gt;&lt;ul&gt;
+                    &lt;li&gt;Should contain the issue ID like &lt;code&gt;#123&lt;/code&gt;&lt;/li&gt;
+                    &lt;li&gt;Can contain the tag &lt;code&gt;[trivial]&lt;/code&gt; for trivial changes that don&#x27;t relate to an issue&lt;/li&gt;
+                    &lt;/ul&gt;"/>
+        <title_6 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Coding Styleguides" titleType="h2"/>
+        <text_6 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;We enforce a coding styleguide using &lt;code&gt;eslint&lt;/code&gt;. As part of your build, run &lt;code&gt;npm run lint&lt;/code&gt; to check if your code is conforming to the style guide. We do the same for every PR in our CI, so PRs will get rejected if they don&#x27;t follow the style guide.&lt;/p&gt;&lt;p&gt;You can fix some of the issues automatically by running &lt;code&gt;npx eslint . --fix&lt;/code&gt;.&lt;/p&gt;"/>
+        <title_7 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Commit Message Format" titleType="h2"/>
+        <text_7 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;This project uses a structured commit changelog format that should be used for every commit. Use &lt;code&gt;npm run commit&lt;/code&gt; instead of your usual &lt;code&gt;git commit&lt;/code&gt; to generate commit messages using a wizard.&lt;/p&gt;&lt;pre&gt;&lt;code class&#x3D;&quot;language-bash&quot;&gt;# either add all changed files
+                    $ git add -A
+                    # or selectively add files
+                    $ git add package.json
+                    # then commit using the wizard
+                    $ npm run commit
+                    &lt;/code&gt;&lt;/pre&gt;"/>
+        <title_8 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="How Contributions get Reviewed" titleType="h1"/>
+        <text_8 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;One of the maintainers will look at the pull request within one week. Feedback on the pull request will be given in writing, in GitHub.&lt;/p&gt;"/>
+        <title_9 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" title="Release Management" titleType="h1"/>
+        <text_9 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;The project&#x27;s committers will release to the &lt;a href&#x3D;&quot;https://www.npmjs.com/org/adobe&quot;&gt;Adobe organization on npmjs.org&lt;/a&gt;.
+                    Please contact the &lt;a href&#x3D;&quot;https://git.corp.adobe.com/OpenSourceAdvisoryBoard/discuss/issues&quot;&gt;Adobe Open Source Advisory Board&lt;/a&gt; to get access to the npmjs organization.&lt;/p&gt;&lt;p&gt;The release process is fully automated using &lt;code&gt;semantic-release&lt;/code&gt;, increasing the version numbers, etc. based on the contents of the commit messages found.&lt;/p&gt;"/>
+      </section>
+    </root>
+  </jcr:content>
+</jcr:root>
