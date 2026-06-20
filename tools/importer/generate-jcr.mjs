@@ -13,6 +13,15 @@ const OUT_DIR = path.join(REPO, 'migration-work', 'jcr-content');
 // Collapsed field suffixes never get their own row/cell (they ride on a sibling).
 const COLLAPSED = /(Title|Type|MimeType|Alt|Text)$/;
 
+// Heading -> card image URL, recovered from the live site for cards whose
+// images the scraper dropped (lazy-loaded data-srcset).
+let CARD_IMAGES = {};
+async function loadCardImages() {
+  try {
+    CARD_IMAGES = JSON.parse(await readFile(path.join(REPO, 'migration-work', 'card-images.json'), 'utf-8'));
+  } catch (e) { CARD_IMAGES = {}; }
+}
+
 async function loadComponents() {
   const models = JSON.parse(await readFile(path.join(REPO, 'component-models.json'), 'utf-8'));
   const defs = JSON.parse(await readFile(path.join(REPO, 'component-definition.json'), 'utf-8'));
@@ -65,6 +74,29 @@ function normalizeContent(document) {
       const h = scope && scope.querySelector('h1,h2,h3,h4,h5,h6');
       img.setAttribute('alt', h ? h.textContent.trim().slice(0, 120) : '');
     }
+  });
+
+  // 1b. inject card images the scraper dropped: for each cards-* block, match
+  // each card's heading to the recovered image URL and fill its empty image cell.
+  main.querySelectorAll('div.cards-feature, div.cards-service, div.cards-contact, div.cards-milestone, div.cards-icon-tile').forEach((block) => {
+    [...block.children].filter((r) => r.tagName === 'DIV').forEach((row) => {
+      const cells = [...row.children].filter((c) => c.tagName === 'DIV');
+      if (cells.length < 2) return;
+      const imgCell = cells[0];
+      if (imgCell.querySelector('img')) return; // already has an image
+      const h = row.querySelector('h2, h3, h4, h5');
+      if (!h) return;
+      const heading = h.textContent.trim().replace(/\s+/g, ' ');
+      const src = CARD_IMAGES[heading];
+      if (!src) return;
+      const p = document.createElement('p');
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = heading;
+      img.loading = 'lazy';
+      p.appendChild(img);
+      imgCell.appendChild(p);
+    });
   });
 
   // 2. de-duplicate identical adjacent carousel slides (by normalized text)
@@ -266,6 +298,7 @@ async function walk(dir) {
 
 async function main() {
   const { components, blockMeta } = await loadComponents();
+  await loadCardImages();
   const files = await walk(CONTENT_DIR);
   console.log(`Found ${files.length} content files`);
   let ok = 0; let blocky = 0; const failed = [];
