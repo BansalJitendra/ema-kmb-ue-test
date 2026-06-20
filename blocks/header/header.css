@@ -140,15 +140,25 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 /* brand */
 header .nav-brand {
   grid-area: brand;
-  flex-basis: 128px;
+  flex-basis: 140px;
   font-size: var(--heading-font-size-s);
   font-weight: 700;
   line-height: 1;
 }
 
+/* Render the Kotak logo (matches the live site) in place of the plain text
+   brand link. The authored fragment carries the brand as text, so swap it for
+   the logo image via CSS: hide the text and paint the logo as a background. */
 /* stylelint-disable-next-line no-descending-specificity */
 header .nav-brand a {
-  color: var(--brand-secondary);
+  display: block;
+  width: 140px;
+  height: 32px;
+  overflow: hidden;
+  text-indent: -9999px;
+  white-space: nowrap;
+  background: url('https://www.kotak.bank.in/content/dam/Kotak/svg-icons/navigation/kmbl-logo.svg') left center / contain no-repeat;
+  color: transparent;
   text-decoration: none;
 }
 

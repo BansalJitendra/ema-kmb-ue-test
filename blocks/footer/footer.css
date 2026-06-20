@@ -1,7 +1,12 @@
+/* Live Kotak footer: white background, dark text, multi-column link layout.
+   The authored footer content collapses into a single default-content-wrapper
+   (a flat run of H3 + P/UL groups), so the columns are produced with CSS
+   multi-column flow rather than grid cells. */
 footer {
-  background-color: var(--brand-secondary);
-  color: #fff;
+  background-color: #fff;
+  color: var(--text-color);
   font-size: var(--body-font-size-xs);
+  border-top: 1px solid #e8ebf4;
 }
 
 footer .footer > div {
@@ -10,61 +15,58 @@ footer .footer > div {
   padding: 32px 24px 24px;
 }
 
-footer .footer p {
-  margin: 0 0 8px;
+footer .footer .default-content-wrapper {
+  column-gap: 32px;
 }
 
 footer .footer h3 {
-  color: #fff;
+  color: var(--brand-secondary);
   font-size: 14px;
   font-weight: 700;
-  margin: 16px 0 8px;
+  margin: 0 0 8px;
+
+  /* keep a heading and its following list together in the same column */
+  break-after: avoid;
+  break-inside: avoid;
+}
+
+footer .footer p {
+  margin: 0 0 8px;
+  break-inside: avoid;
 }
 
 footer .footer ul {
   list-style: none;
-  margin: 0 0 16px;
+  margin: 0 0 20px;
   padding: 0;
+  break-inside: avoid;
 }
 
 footer .footer li {
-  margin: 4px 0;
+  margin: 6px 0;
 }
 
 footer .footer a:any-link {
-  color: #cfd8e8;
+  color: var(--text-color);
   text-decoration: none;
 }
 
 footer .footer a:hover {
-  color: #fff;
-  text-decoration: underline;
+  color: var(--brand-primary);
+  text-decoration: none;
 }
 
-/* support contact row (first section) */
-footer .footer > div:first-child {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px 32px;
-  border-bottom: 1px solid rgb(255 255 255 / 15%);
-}
-
-/* link columns (second section) */
-footer .footer > div:nth-child(2) {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0 32px;
-}
-
-/* copyright (last section) */
-footer .footer > div:last-child {
-  border-top: 1px solid rgb(255 255 255 / 15%);
+/* the trailing copyright lines span the full width below the columns */
+footer .footer .default-content-wrapper > p:last-of-type,
+footer .footer .default-content-wrapper > p:nth-last-of-type(2) {
+  color: #777;
   font-size: 12px;
-  color: #cfd8e8;
 }
 
-footer .footer > div:last-child a:any-link {
-  color: #cfd8e8;
+@media (width >= 600px) {
+  footer .footer .default-content-wrapper {
+    column-count: 2;
+  }
 }
 
 @media (width >= 900px) {
@@ -72,17 +74,7 @@ footer .footer > div:last-child a:any-link {
     padding: 40px 32px 24px;
   }
 
-  footer .footer > div:first-child {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  footer .footer > div:nth-child(2) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  footer .footer > div:nth-child(3) {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0 32px;
+  footer .footer .default-content-wrapper {
+    column-count: 4;
   }
 }
