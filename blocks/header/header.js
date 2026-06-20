@@ -186,6 +186,34 @@ export default async function decorate(block) {
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
+  // The Universal Editor JCR conversion collapses the authored brand/nav/tools
+  // groups into a single section whose default-content-wrapper holds the brand
+  // link (<p>), the nav menu (<ul>) and the tools link (<p>). The decorator
+  // below expects three sibling sections, so rebuild them from that one wrapper.
+  if (nav.children.length === 1) {
+    const wrapper = nav.querySelector(':scope > div .default-content-wrapper')
+      || nav.querySelector(':scope > div > div') || nav.firstElementChild;
+    const menu = wrapper && wrapper.querySelector(':scope > ul');
+    if (menu) {
+      const makeSection = (nodes) => {
+        const section = document.createElement('div');
+        const dcw = document.createElement('div');
+        dcw.className = 'default-content-wrapper';
+        nodes.forEach((n) => dcw.append(n));
+        section.append(dcw);
+        return section;
+      };
+      const before = [];
+      const after = [];
+      let seenMenu = false;
+      [...wrapper.children].forEach((child) => {
+        if (child === menu) { seenMenu = true; return; }
+        (seenMenu ? after : before).push(child);
+      });
+      nav.replaceChildren(makeSection(before), makeSection([menu]), makeSection(after));
+    }
+  }
+
   const classes = ['brand', 'sections', 'tools'];
   classes.forEach((c, i) => {
     const section = nav.children[i];
