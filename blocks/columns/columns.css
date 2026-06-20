@@ -5,6 +5,8 @@
 
 .columns img {
   width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
 .columns > div > div {
@@ -19,11 +21,46 @@
   display: block;
 }
 
+/* article links inside columns (e.g. Knowledge Hub) */
+.columns a:any-link {
+  color: var(--brand-secondary);
+  text-decoration: none;
+}
+
+.columns a:hover {
+  color: var(--brand-primary);
+}
+
+/* Knowledge Hub article list (second column renders as a <ul>) */
+.columns ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.columns ul li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8ebf4;
+}
+
+/* stylelint-disable no-descending-specificity */
+.columns ul li picture,
+.columns ul li img {
+  width: 96px;
+  height: 64px;
+  flex: 0 0 96px;
+  border-radius: 6px;
+}
+/* stylelint-enable no-descending-specificity */
+
 @media (width >= 900px) {
   .columns > div {
-    align-items: center;
+    align-items: flex-start;
     flex-direction: unset;
-    gap: 24px;
+    gap: 32px;
   }
 
   .columns > div > div {

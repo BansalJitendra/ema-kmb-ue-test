@@ -118,6 +118,29 @@ function normalizeContent(document) {
     });
   });
 
+  // 1c. columns-media: md2jcr's columns handler drops images that are wrapped in
+  // a link (<a><picture><img></picture></a>) and external — it emits an empty
+  // button, losing the thumbnail. Unwrap such images to a standalone <picture>
+  // (kept as the cell's first child) so the conversion preserves them.
+  main.querySelectorAll('div.columns-media, div.columns-info').forEach((block) => {
+    block.querySelectorAll('a img').forEach((img) => {
+      const link = img.closest('a');
+      const p = link.closest('p') || link.parentElement;
+      const picture = document.createElement('picture');
+      const newImg = document.createElement('img');
+      newImg.src = img.getAttribute('src');
+      newImg.alt = img.getAttribute('alt') || '';
+      newImg.loading = 'lazy';
+      picture.appendChild(newImg);
+      const wrap = document.createElement('p');
+      wrap.appendChild(picture);
+      // place the standalone image just before the (now image-less) link paragraph
+      if (p && p.parentNode) p.parentNode.insertBefore(wrap, p);
+      // remove the emptied link wrapper to avoid a stray empty anchor
+      if (link.textContent.trim() === '') link.remove();
+    });
+  });
+
   // 2. de-duplicate identical adjacent carousel slides (by normalized text)
   main.querySelectorAll('div.carousel-promo, div.carousel-icons, div.carousel-banner, div.carousel-gallery').forEach((car) => {
     const seen = new Set();
