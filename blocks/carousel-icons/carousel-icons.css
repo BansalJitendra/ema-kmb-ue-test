@@ -9,8 +9,9 @@
   padding: 0;
 }
 
-/* Quick-action icon strip: show all items in one row (like the live "Need
-   Help?" strip), not a one-at-a-time slider. */
+/* Quick-action "Need Help?" strip: a single horizontal row of white cards,
+   each with the icon on the left and the label text on the right (matches the
+   live site). Not a one-at-a-time slider. */
 .carousel-icons .carousel-icons-slides {
   display: flex;
   flex-wrap: wrap;
@@ -24,16 +25,22 @@
 }
 
 .carousel-icons .carousel-icons-slide {
-  flex: 1 1 140px;
-  max-width: 200px;
+  flex: 1 1 200px;
+  max-width: 240px;
   scroll-snap-align: start;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
   justify-content: flex-start;
+  gap: 12px;
   position: relative;
   width: auto;
   min-height: auto;
+  padding: 16px;
+  background-color: #fff;
+  border: 1px solid #e8ebf4;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgb(15 52 100 / 8%);
 }
 
 /* Single-row strip doesn't need prev/next arrows or slide dots. */
@@ -42,17 +49,15 @@
   display: none;
 }
 
-.carousel-icons .carousel-icons-slide:has(.carousel-icons-slide-content[data-align='center']) {
-  align-items: center;
-}
-
-.carousel-icons .carousel-icons-slide:has(.carousel-icons-slide-content[data-align='right']) {
-  align-items: flex-end;
-}
-
 .carousel-icons .carousel-icons-slide .carousel-icons-slide-image {
+  flex: 0 0 auto;
   position: static;
   text-align: center;
+  margin: 0;
+}
+
+.carousel-icons .carousel-icons-slide .carousel-icons-slide-image p {
+  margin: 0;
 }
 
 .carousel-icons .carousel-icons-slide .carousel-icons-slide-image picture {
@@ -60,120 +65,54 @@
 }
 
 .carousel-icons .carousel-icons-slide .carousel-icons-slide-image picture > img {
-  height: 32px;
-  width: 32px;
+  height: 28px;
+  width: 28px;
   object-fit: contain;
 }
 
 .carousel-icons .carousel-icons-slide .carousel-icons-slide-content {
   z-index: 1;
-  margin: 12px;
+  margin: 0;
   padding: 0;
   color: var(--text-color);
   background-color: transparent;
   position: relative;
-  width: var(--slide-content-width, auto);
-  text-align: center;
+  width: auto;
+  flex: 1 1 auto;
+  text-align: left;
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
+.carousel-icons .carousel-icons-slide-content p {
+  margin: 0;
+}
+
+/* Neutralize the global red button pill EDS applies to standalone links so the
+   labels render as plain dark text (the live cards are not buttons). */
+.carousel-icons .carousel-icons-slide-content .button-container {
+  margin: 0;
+}
+
+.carousel-icons .carousel-icons-slide-content a.button:any-link,
 .carousel-icons .carousel-icons-slide-content a:any-link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
   color: var(--brand-secondary);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
   text-decoration: none;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .carousel-icons .carousel-icons-slide-content a:hover {
   color: var(--brand-primary);
+  background: none;
 }
-
-.carousel-icons .carousel-icons-slide-indicators {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px 12px;
-  padding: 12px;
-  background-color: var(--light-color);
-  line-height: 0;
-}
-
-.carousel-icons .carousel-icons-slide-indicator button {
-  width: 24px;
-  height: 24px;
-  margin: 0;
-  padding: 0;
-  border-radius: 50%;
-  background-color: #dadada;
-  transition: background-color 0.2s;
-}
-
-.carousel-icons .carousel-icons-slide-indicator button:disabled,
-.carousel-icons .carousel-icons-slide-indicator button:hover,
-.carousel-icons .carousel-icons-slide-indicator button:focus-visible {
-  background-color: var(--text-color);
-}
-
-.carousel-icons .carousel-icons-navigation-buttons {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 12px;
-  right: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 1;
-}
-
-/* stylelint-disable-next-line no-descending-specificity */
-.carousel-icons .carousel-icons-navigation-buttons button {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  margin: 0;
-  border-radius: 50%;
-  padding: 0;
-  background-color: rgb(19 19 19 / 25%);
-  transition: background-color 0.2s;
-}
-
-.carousel-icons .carousel-icons-navigation-buttons button:hover,
-.carousel-icons .carousel-icons-navigation-buttons button:focus-visible {
-  background-color: rgb(19 19 19 / 75%);
-}
-
-.carousel-icons .carousel-icons-navigation-buttons button::after {
-  display: block;
-  content: '';
-  border: 2px solid;
-  border-bottom: 0;
-  border-left: 0;
-  height: 12px;
-  width: 12px;
-  position: absolute;
-  top: 50%;
-  left: calc(50% + 2px);
-  transform: translate(-50%, -50%) rotate(-135deg);
-}
-
-.carousel-icons .carousel-icons-navigation-buttons button.slide-next::after {
-  transform: translate(-50%, -50%) rotate(45deg);
-  left: calc(50% - 2px);
-}
-
-@media (width >= 600px) {
-  .carousel-icons .carousel-icons-navigation-buttons {
-    left: 24px;
-    right: 24px;
-  }
-
-  .carousel-icons .carousel-icons-slide .carousel-icons-slide-content {
-    --slide-content-width: calc((100% - 184px) / 2);
-
-    margin: 92px;
-  }
-
-  .carousel-icons .carousel-icons-slide .carousel-icons-slide-content[data-align='justify'] {
-    --slide-content-width: auto;
-  }
-}
-
-
