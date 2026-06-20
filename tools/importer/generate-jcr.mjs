@@ -188,6 +188,62 @@ function normalizeContent(document) {
     });
   });
 
+  // 1b2. The homepage's first product band is a randomized slider; the scrape
+  // captured only 3 of its 6 cards. Append the recovered evergreen cards so the
+  // band matches the live 6-card view. Keyed off the known first-card heading so
+  // it only runs on that specific block.
+  const EXTRA_PRODUCT_CARDS = [
+    {
+      subtitle: '811 SUPER',
+      title: 'Backing you with every swipe',
+      desc: 'Enjoy ₹6000 cashback every year',
+      cta: 'Apply Now',
+      href: 'https://www.kotak811.com/open-zero-balance-savings-account/811-super?utm_source=kotak_website_hp_featured_card&utm_medium=referral&utm_campaign=account_open',
+      img: 'https://www.kotak.bank.in/content/dam/Kotak/feature-cards/811-super.jpeg.transform/transformer-width-737-height-414/image.jpeg',
+    },
+    {
+      subtitle: 'HOME LOAN',
+      title: 'Hassle Free Home Loans tailored for your needs!',
+      desc: 'Kotak Home Loans upto 40 Cr* with a repayment tenure upto 25 years*',
+      cta: 'Apply Now',
+      href: 'https://homeloans.kotak.bank.in/loginDetail?flow=apply&pn=HL&cid=HL001&cName=HLProductPage_MainBanner&utm_source=organic&utm_medium=Website_Homepage&utm_campaign=Homepage_Featurecard&utm_content=Display&utm_term=HL001',
+      img: 'https://www.kotak.bank.in/content/dam/Kotak/feature-cards/home-loan-feature-card.jpg.transform/transformer-width-737-height-414/image.jpg',
+    },
+    {
+      subtitle: 'CREDIT CARDS',
+      title: 'Enjoy exclusive offers with Kotak Credit Cards',
+      desc: 'Rewards | Cashback | EMI Deals',
+      cta: 'Apply Now',
+      href: 'https://onboarding.kotak.bank.in/cc?utm_source=Organic&utm_medium=hpfeaturecard&utm_campaign=unifeaturecard',
+      img: 'https://www.kotak.bank.in/content/dam/Kotak/feature-cards/cc-card-358-x-201.jpg.transform/transformer-width-737-height-414/image.jpg',
+    },
+  ];
+  main.querySelectorAll('div.cards-feature').forEach((block) => {
+    const firstHeading = block.querySelector('h4, h3');
+    if (!firstHeading || firstHeading.textContent.trim() !== 'Power your entrepreneurial dreams') return;
+    const existing = [...block.children].filter((c) => c.tagName === 'DIV').length;
+    if (existing >= 6) return; // already complete
+    EXTRA_PRODUCT_CARDS.forEach((c) => {
+      const row = document.createElement('div');
+      const imgCell = document.createElement('div');
+      const imgP = document.createElement('p');
+      const img = document.createElement('img');
+      img.src = c.img; img.alt = c.title; img.loading = 'lazy';
+      imgP.appendChild(img); imgCell.appendChild(imgP);
+      const textCell = document.createElement('div');
+      textCell.appendChild(document.createComment(' field:text '));
+      const sub = document.createElement('p'); sub.textContent = c.subtitle;
+      const h = document.createElement('h4'); h.textContent = c.title;
+      const desc = document.createElement('p'); desc.textContent = c.desc;
+      const ctaP = document.createElement('p');
+      const a = document.createElement('a'); a.setAttribute('href', c.href); a.textContent = c.cta;
+      ctaP.appendChild(a);
+      textCell.append(sub, h, desc, ctaP);
+      row.append(imgCell, textCell);
+      block.appendChild(row);
+    });
+  });
+
   // 1c. columns-media: md2jcr's columns handler drops images that are wrapped in
   // a link (<a><picture><img></picture></a>) and external — it emits an empty
   // button, losing the thumbnail. Unwrap such images to a standalone <picture>
