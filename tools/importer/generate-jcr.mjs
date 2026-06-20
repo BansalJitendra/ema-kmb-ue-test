@@ -130,6 +130,31 @@ function normalizeContent(document) {
     }
   });
 
+  // 1a. carousel-icons ("Need Help?") tiles: the source concatenates the tile
+  // title and its description into one link with no delimiter (e.g.
+  // "Visit Help CenterGet information on all topics"). Split each link's text
+  // into a bold title line + a description line so they render on two lines,
+  // matching the live tiles. Titles are a known fixed set.
+  const ICON_TILE_TITLES = [
+    'Visit Help Center', 'Contact us', 'Locate us', 'Report a fraud',
+    'Lodge a complaint', 'Block lost/stolen card',
+  ];
+  main.querySelectorAll('div.carousel-icons a').forEach((a) => {
+    const full = a.textContent.trim();
+    const title = ICON_TILE_TITLES.find((t) => full.startsWith(t) && full.length > t.length);
+    if (!title) return;
+    const desc = full.slice(title.length).trim();
+    a.textContent = title;
+    const cell = a.closest('div');
+    if (cell && desc) {
+      const p = document.createElement('p');
+      p.textContent = desc;
+      // place the description right after the link's paragraph
+      const linkP = a.closest('p') || a;
+      if (linkP.parentNode) linkP.parentNode.insertBefore(p, linkP.nextSibling);
+    }
+  });
+
   // 1. placeholder alt cleanup
   main.querySelectorAll('img[alt]').forEach((img) => {
     if (BAD_ALT.test(img.getAttribute('alt').trim())) {

@@ -31,6 +31,14 @@
   display: none;
 }
 
+/* The source split the products slider into two adjacent card blocks (an
+   8-card block + a trailing 4-card remainder). Live shows a single 6-card
+   band, so hide the trailing remainder block that immediately follows another
+   cards-feature block. */
+.cards-feature-wrapper + .cards-feature-wrapper {
+  display: none;
+}
+
 .cards-feature .cards-feature-card-image {
   line-height: 0;
 }
