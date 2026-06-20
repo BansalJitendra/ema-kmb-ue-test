@@ -25,11 +25,11 @@
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
   position: relative;
   width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
+  min-height: auto;
 }
 
 .carousel-gallery .carousel-gallery-slide:has(.carousel-gallery-slide-content[data-align='center']) {
@@ -40,25 +40,37 @@
   align-items: flex-end;
 }
 
+/* Kotak photo gallery — matched to live source: plain photos (no overlay box),
+   image-only slides shown as a clean cover image. */
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-image {
+  width: 100%;
+}
+
 .carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-image picture {
-  position: absolute;
-  inset: 0;
+  position: static;
+  display: block;
 }
 
 .carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-image picture > img {
-  height: 100%;
   width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
+  display: block;
 }
 
 .carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content {
   z-index: 1;
-  margin: 68px;
-  padding: 16px;
-  color: white;
-  background-color: rgb(19 19 19 / 75%);
+  margin: 0;
+  padding: 0;
+  color: var(--text-color);
+  background-color: transparent;
   position: relative;
   width: var(--slide-content-width, auto);
+}
+
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content:empty {
+  display: none;
 }
 
 .carousel-gallery .carousel-gallery-slide-indicators {

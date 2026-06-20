@@ -53,12 +53,42 @@
 
 .carousel-banner .carousel-banner-slide .carousel-banner-slide-content {
   z-index: 1;
-  margin: 68px;
-  padding: 16px;
-  color: white;
-  background-color: rgb(19 19 19 / 75%);
+  margin: 48px;
+  padding: 0;
+  color: #fff;
+  background-color: transparent;
   position: relative;
   width: var(--slide-content-width, auto);
+}
+
+/* Kotak dark hero banner — matched to live source: white headline (44px/52px,
+   weight 700), orange-red filled CTA, text directly on the banner image. */
+.carousel-banner .carousel-banner-slide-content h1,
+.carousel-banner .carousel-banner-slide-content h2 {
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.carousel-banner .carousel-banner-slide-content p {
+  color: #fff;
+}
+
+.carousel-banner .carousel-banner-slide-content a:any-link {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 20px;
+  border: 1px solid #ed4223;
+  border-radius: 4px;
+  background-color: #ed4223;
+  color: #fff;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.carousel-banner .carousel-banner-slide-content a:hover {
+  background-color: #d63519;
+  border-color: #d63519;
 }
 
 .carousel-banner .carousel-banner-slide-indicators {
