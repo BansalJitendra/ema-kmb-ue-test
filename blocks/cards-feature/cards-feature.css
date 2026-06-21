@@ -70,13 +70,32 @@
   color: var(--text-color);
 }
 
-/* CTA links render red, no underline (source: rgb(255,0,0)) */
-.cards-feature .cards-feature-card-body a:any-link {
-  color: var(--brand-primary);
-  font-weight: 500;
-  text-decoration: none;
+/* CTA links render as plain red text, not the global red button pill.
+   EDS auto-wraps standalone links as a.button in p.button-container and the
+   global styles paint a solid red background, which made the red CTA text
+   invisible (red on red). Neutralize the pill: no background/border/padding. */
+.cards-feature .cards-feature-card-body .button-container {
+  margin: 8px 0 0;
 }
 
+.cards-feature .cards-feature-card-body a.button:any-link,
+.cards-feature .cards-feature-card-body a:any-link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--brand-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: normal;
+}
+
+.cards-feature .cards-feature-card-body a.button:hover,
 .cards-feature .cards-feature-card-body a:hover {
+  background: none;
+  color: var(--brand-primary);
   text-decoration: underline;
 }
