@@ -80,3 +80,58 @@
   background: none;
   color: var(--brand-primary);
 }
+
+/* ── Circle variant ("Welcome to Customer Service") ──────────────────────────
+   Centered tiles: a large thin-bordered circle around the icon, a bold red
+   title below, then a centered description — matching the live layout. */
+.cards-icon-tile-circle > ul {
+  gap: 24px 16px;
+}
+
+.cards-icon-tile-circle > ul > li {
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 0 8px 8px;
+  border: none;
+  border-radius: 0;
+  background: none;
+  text-align: center;
+}
+
+/* the icon sits inside a large circular outline */
+.cards-icon-tile-circle .cards-icon-tile-card-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 180px;
+  max-width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+}
+
+.cards-icon-tile-circle .cards-icon-tile-card-image img {
+  width: 56px;
+  height: 56px;
+}
+
+.cards-icon-tile-circle .cards-icon-tile-card-body {
+  text-align: center;
+}
+
+/* bold red title */
+.cards-icon-tile-circle .cards-icon-tile-card-body .button-container a:any-link,
+.cards-icon-tile-circle .cards-icon-tile-card-body > p:first-child a:any-link,
+.cards-icon-tile-circle .cards-icon-tile-card-body > p:first-child strong {
+  color: var(--brand-primary);
+  font-weight: 700;
+}
+
+/* description paragraphs in normal dark text */
+.cards-icon-tile-circle .cards-icon-tile-card-body p {
+  margin: 8px 0 0;
+  color: var(--text-color);
+  font-weight: 400;
+  line-height: 1.5;
+}

@@ -41,6 +41,16 @@ export default function decorate(block) {
       img.closest('picture').replaceWith(optimizedPic);
     }
   });
+
+  // Two layouts share this block: a compact icon-left grid (e.g. "Important
+  // Customer Information", just an icon + a single label) and a centered
+  // icon-in-circle layout with a title + description (e.g. "Welcome to Customer
+  // Service"). Detect the latter — any card whose body has more than one
+  // paragraph (title + description) — and switch to the centered circle variant.
+  const hasDescription = [...ul.querySelectorAll('.cards-icon-tile-card-body')]
+    .some((body) => body.querySelectorAll('p').length > 1);
+  if (hasDescription) block.classList.add('cards-icon-tile-circle');
+
   block.textContent = '';
   block.append(ul);
 }
