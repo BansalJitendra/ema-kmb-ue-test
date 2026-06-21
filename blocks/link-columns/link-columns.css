@@ -1,6 +1,8 @@
 /* Link-list columns ("Credit Card Services" / "Credit Cards Guide" /
    "What's New?") — three equal columns of icon links with a bold header and a
    trailing "view all" link, matching the live mf-card layout. */
+
+/* stylelint-disable no-descending-specificity */
 .link-columns {
   display: grid;
   grid-template-columns: 1fr;
@@ -9,7 +11,7 @@
 
 @media (width >= 768px) {
   .link-columns {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -56,11 +58,18 @@
 }
 
 .link-columns .link-columns-body li picture,
-.link-columns .link-columns-body li img {
+.link-columns .link-columns-body li img,
+.link-columns .link-columns-body li .link-columns-icon {
   flex: 0 0 24px;
   width: 24px;
   height: 24px;
   object-fit: contain;
+}
+
+/* the icon sits in its own <p> wrapper from the source markup — keep it inline
+   and tight so the row stays a single icon + label line */
+.link-columns .link-columns-body li p {
+  margin: 0;
 }
 
 .link-columns .link-columns-body a:any-link {

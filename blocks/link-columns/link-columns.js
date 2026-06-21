@@ -1,4 +1,14 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
+// The list icons were tokenized during migration into `<span class="icon
+// icon-NAME">` (and EDS resolves those to a local /icons/NAME.svg that doesn't
+// exist, so they 404). Map each token back to its original Kotak SVG URL and
+// render a real <img>, matching the live icon-link list.
+const ICONS = {
+  apply: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/apply.svg',
+  'functionality-instant-pin-generation': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/functionality-instant-pin-generation.svg',
+  'flexible-repayment-options': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Flexible_repayment_options.svg',
+  personalloan: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/PersonalLoan.svg',
+  'credit-card1': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/credit-card1.svg',
+};
 
 // Renders side-by-side link-list columns (e.g. the credit-cards "Credit Card
 // Services" / "Credit Cards Guide" / "What's New?" trio). Each row of the block
@@ -12,12 +22,24 @@ export default function decorate(block) {
     if (cells[1]) cells[1].classList.add('link-columns-body');
   });
 
-  // Serve the small icon SVGs as-is (external) or optimize same-origin ones.
-  block.querySelectorAll('picture > img').forEach((img) => {
-    const src = img.getAttribute('src') || '';
-    if (src.startsWith(window.location.origin) || src.startsWith('/')) {
-      const optimized = createOptimizedPicture(img.src, img.alt, false, [{ width: '60' }]);
-      img.closest('picture').replaceWith(optimized);
+  // Restore tokenized icons to their original external SVGs.
+  block.querySelectorAll('span.icon, img').forEach((el) => {
+    let token = null;
+    if (el.tagName === 'SPAN') {
+      const cls = [...el.classList].find((c) => c.startsWith('icon-'));
+      token = cls ? cls.slice(5) : null;
+    } else {
+      // an <img> EDS already built pointing at the missing /icons/NAME.svg
+      const m = (el.getAttribute('src') || '').match(/\/icons\/([^/.]+)\.svg/);
+      token = m ? m[1] : null;
     }
+    const url = token && ICONS[token];
+    if (!url) return;
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = '';
+    img.loading = 'lazy';
+    img.className = 'link-columns-icon';
+    (el.tagName === 'SPAN' ? el : el).replaceWith(img);
   });
 }
