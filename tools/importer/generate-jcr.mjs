@@ -22,6 +22,15 @@ async function loadCardImages() {
   } catch (e) { CARD_IMAGES = {}; }
 }
 
+// Full data for the credit-cards "A Credit Card for everyone" filterable catalog
+// (32 cards + category/sub-category mapping), captured from the live site.
+let CC_FILTER = null;
+async function loadCreditCardsFilter() {
+  try {
+    CC_FILTER = JSON.parse(await readFile(path.join(REPO, 'migration-work', 'credit-cards-filter.json'), 'utf-8'));
+  } catch (e) { CC_FILTER = null; }
+}
+
 async function loadComponents() {
   const models = JSON.parse(await readFile(path.join(REPO, 'component-models.json'), 'utf-8'));
   const defs = JSON.parse(await readFile(path.join(REPO, 'component-definition.json'), 'utf-8'));
@@ -540,6 +549,112 @@ function normalizeContent(document) {
   });
 }
 
+/**
+ * The credit-cards "A Credit Card for everyone" section is a JS-driven, backend-
+ * fed filterable catalog (32 cards + a Categories/Sub-Categories filter), so the
+ * scrape captured only flat heading + filter-label text + loose card images.
+ * Replace that flat run with a `cards-filter` block table built from the
+ * captured dataset (migration-work/credit-cards-filter.json): one row per card —
+ * cell 1 = image, cell 2 = title + fee + bullets + Apply CTA, plus trailing
+ * `Categories:`/`Sub-Categories:` tag paragraphs the block JS reads for filtering.
+ * Returns true if it ran.
+ */
+function buildCreditCardsFilter(document) {
+  if (!CC_FILTER || !CC_FILTER.cards) return false;
+  const main = document.querySelector('main') || document.body;
+  const heading = [...main.querySelectorAll('h2')]
+    .find((h) => h.textContent.trim() === CC_FILTER.heading);
+  if (!heading) return false;
+
+  // Reverse the title -> categories / sub-categories lookup from the maps.
+  const catsByTitle = {};
+  const subsByTitle = {};
+  Object.entries(CC_FILTER.categoryMap || {}).forEach(([cat, titles]) => {
+    titles.forEach((t) => { (catsByTitle[t] = catsByTitle[t] || []).push(cat); });
+  });
+  Object.entries(CC_FILTER.subCategoryMap || {}).forEach(([sub, titles]) => {
+    titles.forEach((t) => { (subsByTitle[t] = subsByTitle[t] || []).push(sub); });
+  });
+
+  const block = document.createElement('div');
+  block.className = 'cards-filter';
+
+  CC_FILTER.cards.forEach((c) => {
+    const row = document.createElement('div');
+
+    // Cell 1 — image.
+    const imgCell = document.createElement('div');
+    if (c.img) {
+      const imgP = document.createElement('p');
+      const img = document.createElement('img');
+      img.src = c.img.startsWith('http') ? c.img : `https://www.kotak.bank.in${c.img}`;
+      img.alt = c.title;
+      img.loading = 'lazy';
+      imgP.appendChild(img);
+      imgCell.appendChild(imgP);
+    }
+
+    // Cell 2 — text: title, fee, bullets, CTA, then tag paragraphs.
+    const textCell = document.createElement('div');
+    textCell.appendChild(document.createComment(' field:text '));
+    const h = document.createElement('h3');
+    h.textContent = c.title;
+    textCell.appendChild(h);
+    if (c.fee) {
+      const fee = document.createElement('p');
+      fee.textContent = c.fee;
+      textCell.appendChild(fee);
+    }
+    if (Array.isArray(c.bullets) && c.bullets.length) {
+      const ul = document.createElement('ul');
+      c.bullets.forEach((b) => {
+        const li = document.createElement('li');
+        li.textContent = b;
+        ul.appendChild(li);
+      });
+      textCell.appendChild(ul);
+    }
+    if (c.apply) {
+      const ctaP = document.createElement('p');
+      const a = document.createElement('a');
+      a.setAttribute('href', c.apply);
+      a.textContent = c.discontinued ? 'Know More' : 'Apply Now';
+      ctaP.appendChild(a);
+      textCell.appendChild(ctaP);
+    }
+    // Tag paragraphs (consumed by the block JS, not rendered).
+    const cats = catsByTitle[c.title] || [];
+    const subs = subsByTitle[c.title] || [];
+    if (cats.length) {
+      const p = document.createElement('p');
+      p.textContent = `Categories: ${cats.join(', ')}`;
+      textCell.appendChild(p);
+    }
+    if (subs.length) {
+      const p = document.createElement('p');
+      p.textContent = `Sub-Categories: ${subs.join(', ')}`;
+      textCell.appendChild(p);
+    }
+
+    row.append(imgCell, textCell);
+    block.appendChild(row);
+  });
+
+  // Remove the flat scraped content: the filter labels/lists and loose card
+  // images/text between this heading and the next section heading (h2).
+  const toRemove = [];
+  let node = heading.nextElementSibling;
+  while (node && node.tagName !== 'H2') {
+    const next = node.nextElementSibling;
+    toRemove.push(node);
+    node = next;
+  }
+  toRemove.forEach((el) => el.remove());
+
+  heading.parentNode.insertBefore(block, heading.nextSibling);
+  return true;
+}
+
 // Junk text from the source desktop hero icon-nav / autoplay controls that
 // leaked into the loose hero sequence.
 const HERO_JUNK = /^(home|learn|help|get app|personal|business|nri|about us|prev|next|×|x|)$/i;
@@ -839,6 +954,7 @@ async function walk(dir) {
 async function main() {
   const { components, blockMeta } = await loadComponents();
   await loadCardImages();
+  await loadCreditCardsFilter();
   const files = await walk(CONTENT_DIR);
   console.log(`Found ${files.length} content files`);
   let ok = 0; let blocky = 0; const failed = [];
@@ -871,6 +987,7 @@ async function main() {
         // H1 hero + "Welcome" section), so only wrap it into a carousel there.
         if (rel === 'en/home') wrapLooseHero(dom.window.document, blockMeta);
         else wrapInnerHero(dom.window.document, blockMeta);
+        if (rel === 'en/personal-banking/cards/credit-cards') buildCreditCardsFilter(dom.window.document);
         convertBlockDivsToTables(dom.window.document, blockMeta);
         hadBlocks = !!dom.window.document.querySelector('table');
         const html = dom.serialize();

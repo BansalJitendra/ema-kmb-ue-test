@@ -1,0 +1,247 @@
+/* "A Credit Card for everyone" — filterable card catalog.
+   Filter bar with two dropdowns (Categories / Sub-Categories) above a
+   responsive grid of product cards. Matched to the live Kotak layout. */
+
+.cards-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 24px;
+  padding: 16px;
+  background-color: var(--light-color, #f5f5f5);
+  border-radius: 8px;
+}
+
+.cards-filter-count {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.cards-filter-dropdowns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex: 1 1 auto;
+}
+
+.cards-filter-dropdown {
+  position: relative;
+}
+
+.cards-filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border: 1px solid #cfcfcf;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text-color);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.cards-filter-caret {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #666;
+  border-bottom: 2px solid #666;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+
+.cards-filter-dropdown.open .cards-filter-caret {
+  transform: rotate(-135deg);
+}
+
+.cards-filter-menu {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 220px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
+}
+
+.cards-filter-dropdown.open .cards-filter-menu {
+  display: block;
+}
+
+.cards-filter-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.cards-filter-menu li label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.cards-filter-menu li label:hover {
+  background: var(--light-color, #f5f5f5);
+}
+
+.cards-filter-menu input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--brand-primary, #ed4223);
+}
+
+.cards-filter-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.cards-filter-clear,
+.cards-filter-apply,
+.cards-filter-reset {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cards-filter-clear {
+  border: 1px solid #cfcfcf;
+  background: #fff;
+  color: var(--text-color);
+}
+
+.cards-filter-apply {
+  border: 1px solid var(--brand-primary, #ed4223);
+  background: var(--brand-primary, #ed4223);
+  color: #fff;
+}
+
+.cards-filter-reset {
+  border: 1px solid transparent;
+  background: none;
+  color: var(--brand-primary, #ed4223);
+  text-decoration: underline;
+}
+
+/* ── card grid ─────────────────────────────────────────────────────────── */
+.cards-filter-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (width >= 600px) {
+  .cards-filter-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .cards-filter-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.cards-filter-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e8ebf4;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--background-color, #fff);
+  box-shadow: 0 1px 6px rgb(15 52 100 / 8%);
+}
+
+.cards-filter-card-image {
+  line-height: 0;
+}
+
+.cards-filter-card-image img {
+  width: 100%;
+  aspect-ratio: 358 / 201;
+  object-fit: cover;
+}
+
+.cards-filter-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 16px 18px 20px;
+}
+
+.cards-filter-card-body h3,
+.cards-filter-card-body h4 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--brand-secondary, #003874);
+}
+
+.cards-filter-card-body p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #555;
+}
+
+.cards-filter-card-body ul {
+  margin: 0 0 14px;
+  padding-left: 18px;
+  flex: 1 1 auto;
+}
+
+.cards-filter-card-body li {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-color);
+}
+
+/* CTA: neutralize the global red pill into a clear "Apply Now" button + plain
+   link, matching the live card. */
+.cards-filter-card-body .button-container {
+  margin: 0;
+}
+
+.cards-filter-card-body a.button:any-link,
+.cards-filter-card-body a:any-link {
+  display: inline-block;
+  margin: 0;
+  padding: 9px 22px;
+  border: 1px solid var(--brand-primary, #ed4223);
+  border-radius: 6px;
+  background: var(--brand-primary, #ed4223);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cards-filter-card-body a.button:hover,
+.cards-filter-card-body a:hover {
+  background: #d63519;
+  border-color: #d63519;
+}

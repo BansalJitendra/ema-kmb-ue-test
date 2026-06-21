@@ -52,6 +52,12 @@
     ]
   },
   {
+    "id": "cards-filter",
+    "components": [
+      "cards-filter-card"
+    ]
+  },
+  {
     "id": "cards-icon-tile",
     "components": [
       "cards-icon-tile-card"
