@@ -604,6 +604,72 @@ function wrapLooseHero(document, blockMeta) {
 }
 
 /**
+ * Inner pages (e.g. customer-service) lead with a hero authored as flat default
+ * content: an <h1> + intro <p> + a banner-image <p>, which renders as the text
+ * stacked above the image. The live site overlays the text on the banner.
+ * Detect that leading H1 + nearby banner image and wrap them into a single
+ * `carousel-banner` slide (cell 1 = image, cell 2 = heading + intro text) so it
+ * gets the same overlay treatment. Returns true if it ran.
+ */
+function wrapInnerHero(document, blockMeta) {
+  if (!blockMeta['carousel-banner']) return false;
+  const main = document.querySelector('main') || document.body;
+  const wrapper = main.querySelector('main > div, div');
+  if (!wrapper) return false;
+  const kids = [...wrapper.children];
+  // The hero is only the leading run: first element must be an <h1>.
+  const h1Index = kids.findIndex((el) => el.tagName === 'H1');
+  if (h1Index === -1 || h1Index > 2) return false;
+  // Find the banner image within the next few siblings after the h1.
+  const heroImgUrl = /herosliderbanner|hero|banner/i;
+  let imgEl = null;
+  let imgIdx = -1;
+  for (let i = h1Index + 1; i < Math.min(kids.length, h1Index + 6); i += 1) {
+    const img = kids[i].tagName === 'P' ? kids[i].querySelector('img') : null;
+    if (img && heroImgUrl.test(img.getAttribute('src') || '')) { imgEl = img; imgIdx = i; break; }
+  }
+  if (!imgEl) return false;
+  // Text parts = the h1 and any non-empty paragraphs between it and the image
+  // (skip the image paragraph itself).
+  const textParts = [];
+  for (let i = h1Index; i < imgIdx; i += 1) {
+    const el = kids[i];
+    if (el === imgEl.closest('p')) continue;
+    if (/^H[1-6]$/.test(el.tagName) || (el.tagName === 'P' && el.textContent.trim() && !el.querySelector('img'))) {
+      textParts.push(el);
+    }
+  }
+  // Build the carousel-banner authoring table: header + one slide row
+  // [ image cell , heading+text cell ].
+  const table = document.createElement('table');
+  const htr = document.createElement('tr');
+  const htd = document.createElement('td');
+  htd.setAttribute('colspan', '2');
+  htd.textContent = blockMeta['carousel-banner'].title;
+  htr.appendChild(htd);
+  table.appendChild(htr);
+
+  const tr = document.createElement('tr');
+  const imgTd = document.createElement('td');
+  const ip = document.createElement('p');
+  ip.appendChild(imgEl.cloneNode(true));
+  imgTd.appendChild(ip);
+  const txtTd = document.createElement('td');
+  textParts.forEach((p) => txtTd.appendChild(p.cloneNode(true)));
+  tr.appendChild(imgTd);
+  tr.appendChild(txtTd);
+  table.appendChild(tr);
+
+  // Insert the carousel table at the hero's position, then remove the consumed
+  // hero elements (text parts + the image paragraph).
+  const imgP = imgEl.closest('p') || imgEl;
+  wrapper.insertBefore(table, kids[h1Index]);
+  textParts.forEach((el) => el.remove());
+  if (imgP.parentNode) imgP.remove();
+  return true;
+}
+
+/**
  * The page's SEO metadata is authored as `<div class="metadata">` with
  * key/value rows (Title, Description, Image, og:title). md2jcr only lifts
  * metadata into page properties (jcr:title, jcr:description, …) when it sees a
@@ -780,6 +846,7 @@ async function main() {
         // the leading content is real default content (e.g. customer-service's
         // H1 hero + "Welcome" section), so only wrap it into a carousel there.
         if (rel === 'en/home') wrapLooseHero(dom.window.document, blockMeta);
+        else wrapInnerHero(dom.window.document, blockMeta);
         convertBlockDivsToTables(dom.window.document, blockMeta);
         hadBlocks = !!dom.window.document.querySelector('table');
         const html = dom.serialize();
