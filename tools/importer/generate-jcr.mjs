@@ -677,7 +677,10 @@ async function main() {
         const dom = new JSDOM(wrapped);
         normalizeContent(dom.window.document);
         convertMetadataToTable(dom.window.document);
-        wrapLooseHero(dom.window.document, blockMeta);
+        // The loose hero-slider run only exists on the homepage; on other pages
+        // the leading content is real default content (e.g. customer-service's
+        // H1 hero + "Welcome" section), so only wrap it into a carousel there.
+        if (rel === 'en/home') wrapLooseHero(dom.window.document, blockMeta);
         convertBlockDivsToTables(dom.window.document, blockMeta);
         hadBlocks = !!dom.window.document.querySelector('table');
         const html = dom.serialize();
