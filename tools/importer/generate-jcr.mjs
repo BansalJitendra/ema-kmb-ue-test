@@ -268,6 +268,68 @@ function normalizeContent(document) {
     });
   });
 
+  // 1b3. The customer-service "Download Forms" section was scraped as flat
+  // default content (an <h2> followed by repeating <h4> + description <p> +
+  // "Download forms" link <p>), so it renders as plain text with no cards or
+  // images. Rebuild it as a cards-feature block and inject the recovered card
+  // images so it matches the live image-card layout.
+  const DOWNLOAD_FORM_IMAGES = {
+    Personal: 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/Insignia-Privy.jpg.transform/transformer-article-cards/image.jpg',
+    Business: 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/edge_current_account.jpg.transform/transformer-article-cards/image.jpg',
+    'Corporate & Institution': 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/Optima-Privy.jpg.transform/transformer-article-cards/image.jpg',
+    NRI: 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/nro_rupee_savings_account.png.transform/transformer-article-cards/image.png',
+  };
+  const dfHeading = [...main.querySelectorAll('h2')].find((h) => h.textContent.trim() === 'Download Forms');
+  if (dfHeading && !dfHeading.closest('div.cards-feature')) {
+    // Collect the H4 card groups that follow, until the next H2.
+    const cards = [];
+    let node = dfHeading.nextElementSibling;
+    const consumed = [];
+    while (node && node.tagName !== 'H2') {
+      const next = node.nextElementSibling;
+      if (/^H[34]$/.test(node.tagName)) {
+        const title = node.textContent.trim();
+        const parts = [];
+        let sib = next;
+        while (sib && sib.tagName === 'P') {
+          parts.push(sib);
+          sib = sib.nextElementSibling;
+        }
+        if (DOWNLOAD_FORM_IMAGES[title] || parts.length) {
+          cards.push({ title, parts });
+          consumed.push(node, ...parts);
+          node = sib;
+          continue;
+        }
+      }
+      node = next;
+    }
+    if (cards.length) {
+      const block = document.createElement('div');
+      block.className = 'cards-feature';
+      cards.forEach((c) => {
+        const row = document.createElement('div');
+        const imgCell = document.createElement('div');
+        const src = DOWNLOAD_FORM_IMAGES[c.title];
+        if (src) {
+          const imgP = document.createElement('p');
+          const img = document.createElement('img');
+          img.src = src; img.alt = c.title; img.loading = 'lazy';
+          imgP.appendChild(img); imgCell.appendChild(imgP);
+        }
+        const textCell = document.createElement('div');
+        textCell.appendChild(document.createComment(' field:text '));
+        const h = document.createElement('h4'); h.textContent = c.title;
+        textCell.appendChild(h);
+        c.parts.forEach((p) => textCell.appendChild(p.cloneNode(true)));
+        row.append(imgCell, textCell);
+        block.appendChild(row);
+      });
+      consumed.forEach((el) => el.remove());
+      dfHeading.parentNode.insertBefore(block, dfHeading.nextSibling);
+    }
+  }
+
   // 1c. columns-media: md2jcr's columns handler drops images that are wrapped in
   // a link (<a><picture><img></picture></a>) and external — it emits an empty
   // button, losing the thumbnail. Unwrap such images to a standalone <picture>
