@@ -382,6 +382,80 @@ function normalizeContent(document) {
     }
   }
 
+  // 1b5. The "Welcome to Customer Service @ Kotak" section is flat default
+  // content: an <h2> + intro <p>, then 4 contact-method groups, each
+  // [icon <p>][title <p><strong><a>][description <p>]. It renders as a broken
+  // stack with non-loading .svg icon tokens. Convert the 4 groups into a
+  // cards-icon-tile block (icon + title link + description) and keep the SVG
+  // icons as real images via the ?icon query.
+  const welcomeHeading = [...main.querySelectorAll('h2')].find((h) => /^Welcome to Customer Service/i.test(h.textContent.trim()));
+  if (welcomeHeading) {
+    // Walk forward from the heading; the run ends at the next <h2>.
+    const groups = [];
+    const consumed = [];
+    let node = welcomeHeading.nextElementSibling;
+    let cur = null;
+    while (node && node.tagName !== 'H2') {
+      const next = node.nextElementSibling;
+      const icon = node.tagName === 'P' && node.querySelector('img') && !node.querySelector('a') ? node.querySelector('img') : null;
+      const titleLink = node.tagName === 'P' ? node.querySelector('strong > a, a strong, strong a') : null;
+      if (icon) {
+        // start a new card at each icon paragraph
+        cur = { icon, title: null, href: '', desc: [] };
+        groups.push(cur);
+        consumed.push(node);
+      } else if (cur && titleLink) {
+        cur.title = titleLink.textContent.trim();
+        const a = node.querySelector('a');
+        cur.href = a ? (a.getAttribute('href') || '') : '';
+        consumed.push(node);
+      } else if (cur && node.tagName === 'P' && node.textContent.trim()) {
+        cur.desc.push(node);
+        consumed.push(node);
+      }
+      node = next;
+    }
+    const validGroups = groups.filter((g) => g.title);
+    if (validGroups.length) {
+      const block = document.createElement('div');
+      block.className = 'cards-icon-tile';
+      validGroups.forEach((g) => {
+        const row = document.createElement('div');
+        const imgCell = document.createElement('div');
+        const picture = document.createElement('picture');
+        const img = document.createElement('img');
+        let iconSrc = g.icon.getAttribute('src') || '';
+        if (/\.svg$/i.test(iconSrc)) iconSrc += '?icon';
+        img.src = iconSrc;
+        img.alt = '';
+        img.loading = 'lazy';
+        picture.appendChild(img);
+        imgCell.appendChild(picture);
+        const textCell = document.createElement('div');
+        const tp = document.createElement('p');
+        if (g.href) {
+          const a = document.createElement('a');
+          a.setAttribute('href', g.href);
+          a.textContent = g.title;
+          tp.appendChild(a);
+        } else {
+          const strong = document.createElement('strong');
+          strong.textContent = g.title;
+          tp.appendChild(strong);
+        }
+        textCell.appendChild(tp);
+        g.desc.forEach((d) => textCell.appendChild(d.cloneNode(true)));
+        row.append(imgCell, textCell);
+        block.appendChild(row);
+      });
+      // insert the block after the intro paragraph (right before the first
+      // consumed icon node) and remove the consumed loose elements.
+      const firstConsumed = consumed[0];
+      firstConsumed.parentNode.insertBefore(block, firstConsumed);
+      consumed.forEach((el) => el.remove());
+    }
+  }
+
   // 1c. columns-media: md2jcr's columns handler drops images that are wrapped in
   // a link (<a><picture><img></picture></a>) and external — it emits an empty
   // button, losing the thumbnail. Unwrap such images to a standalone <picture>
