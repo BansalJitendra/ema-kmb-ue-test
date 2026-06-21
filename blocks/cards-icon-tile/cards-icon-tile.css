@@ -54,12 +54,29 @@
   margin: 0;
 }
 
+/* The label is a standalone link, which EDS auto-wraps as a.button in
+   p.button-container; the global styles paint a solid red background. Neutralize
+   that pill so the label reads as plain navy text (live has no red background). */
+.cards-icon-tile .cards-icon-tile-card-body .button-container {
+  margin: 0;
+}
+
+.cards-icon-tile .cards-icon-tile-card-body a.button:any-link,
 .cards-icon-tile .cards-icon-tile-card-body a:any-link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
   color: var(--brand-secondary);
   font-weight: 500;
   text-decoration: none;
+  white-space: normal;
 }
 
+.cards-icon-tile .cards-icon-tile-card-body a.button:hover,
 .cards-icon-tile .cards-icon-tile-card-body a:hover {
+  background: none;
   color: var(--brand-primary);
 }
