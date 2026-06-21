@@ -131,6 +131,21 @@ function buildFilters(block, cards) {
 }
 
 export default function decorate(block) {
+  // External image URLs come through as a link to an image file (EDS only builds
+  // <picture> for ingested same-origin media). Convert such links into a
+  // <picture><img> so the card image renders.
+  block.querySelectorAll('a[href]').forEach((link) => {
+    if (/\.(jpe?g|png|webp|gif|svg)(\?|$|\.)/i.test(link.getAttribute('href'))) {
+      const img = document.createElement('img');
+      img.src = link.getAttribute('href');
+      img.alt = '';
+      img.loading = 'lazy';
+      const picture = document.createElement('picture');
+      picture.append(img);
+      link.replaceWith(picture);
+    }
+  });
+
   // Each row = one card: cell 1 image, cell 2 text (title, fee, bullets, CTA),
   // plus trailing paragraphs `Categories: a, b` / `Sub-Categories: x, y` that
   // carry the filter tags.
