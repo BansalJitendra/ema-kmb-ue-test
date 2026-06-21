@@ -111,6 +111,30 @@ function normalizeContent(document) {
     if (el && el.textContent.trim() === '' && !el.querySelector('img, picture, a, svg')) el.remove();
   });
 
+  // 0-nav. strip the leaked desktop hero icon-nav. Many inner pages begin with
+  // the source's mobile/desktop quick-nav (Home / Learn / Help / Get App) whose
+  // icons are navigation/*-def.svg|-sel.svg links, plus stray "prev"/"next"
+  // slider controls. These flatten into loose paragraphs at the top of the page
+  // and render as junk links. Remove any paragraph whose only links point at the
+  // navigation icon set, and the bare label/control paragraphs.
+  const NAV_ICON_RE = /svg-icons\/navigation\/[^"']*-(def|sel)\.svg/i;
+  const NAV_LABEL_RE = /^(Home|Learn|Help|Get App|prev|next)$/i;
+  main.querySelectorAll('p').forEach((p) => {
+    const t = p.textContent.trim();
+    const hasNavIcon = [...p.querySelectorAll('img')].some((img) => NAV_ICON_RE.test(img.getAttribute('src') || ''));
+    // icon paragraph: only an icon-nav link, no meaningful text
+    if (hasNavIcon && t === '') { p.remove(); return; }
+    // bare label paragraph that is a quick-nav item (often an empty-href link)
+    if (NAV_LABEL_RE.test(t)) {
+      const a = p.querySelector('a');
+      const href = a ? (a.getAttribute('href') || '') : '';
+      if (!a || href === '' || href === '/en/home.html' || NAV_LABEL_RE.test(t)) {
+        // only strip when it's a standalone control/label, not body copy
+        if (p.children.length <= 1 && t.length <= 10) p.remove();
+      }
+    }
+  });
+
   // 0. strip leaked JS modal/disclaimer dialogs. The source renders hidden
   // redirect-disclaimer popups ("×" / "Disclaimer" / legal blurb / "Proceed"
   // | "I Accept") that flattened into loose paragraphs. Remove any paragraph
