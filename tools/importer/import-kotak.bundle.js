@@ -48,6 +48,29 @@ var CustomImportScript = (() => {
     if (!items.length) {
       items = Array.from(element.querySelectorAll(".accordion-item, .faq-item, .panel"));
     }
+    if (!items.length) {
+      const headings = Array.from(element.querySelectorAll("h2.target, h3.target"));
+      if (headings.length) {
+        headings.forEach((titleEl) => {
+          let contentEl = titleEl.nextElementSibling;
+          while (contentEl && !contentEl.classList.contains("toggle-ctnt")) {
+            contentEl = contentEl.nextElementSibling;
+          }
+          const summaryFrag = document.createDocumentFragment();
+          summaryFrag.appendChild(document.createComment(" field:summary "));
+          const clone = titleEl.cloneNode(true);
+          clone.querySelectorAll("figure, img, i, .icon-more-arow").forEach((n) => n.remove());
+          summaryFrag.appendChild(document.createTextNode(clone.textContent.replace(/\s+/g, " ").trim()));
+          const contentFrag = document.createDocumentFragment();
+          contentFrag.appendChild(document.createComment(" field:text "));
+          if (contentEl) {
+            const body = contentEl.querySelector(".cmp-text, .block") || contentEl;
+            Array.from(body.childNodes).forEach((n) => contentFrag.appendChild(n.cloneNode(true)));
+          }
+          cells.push([summaryFrag, contentFrag]);
+        });
+      }
+    }
     items.forEach((item) => {
       const titleEl = item.querySelector("h2.target, h2, h3, .accordion-title, .faq-question");
       const contentEl = item.querySelector(".toggle-ctnt, .accordion-content, .faq-answer, .panel-body");
@@ -118,6 +141,69 @@ var CustomImportScript = (() => {
     let cards = Array.from(element.querySelectorAll(".main-white-box"));
     if (!cards.length) {
       cards = Array.from(element.querySelectorAll(".feature-card, .col-md-4 .card, .card"));
+    }
+    if (!cards.length) {
+      const productCards = Array.from(element.querySelectorAll(".mf-sm-cards"));
+      if (productCards.length) {
+        productCards.forEach((card) => {
+          const img = card.querySelector("img");
+          const link = card.querySelector("a");
+          const title = card.querySelector(".card-title");
+          const href = link ? link.getAttribute("href") || "" : "";
+          const imageCell = document.createDocumentFragment();
+          if (img) {
+            imageCell.appendChild(document.createComment(" field:image "));
+            imageCell.appendChild(img.cloneNode(true));
+          }
+          const textCell = document.createDocumentFragment();
+          textCell.appendChild(document.createComment(" field:text "));
+          const label = title ? title.textContent.replace(/\s+/g, " ").trim() : link ? link.textContent.replace(/\s+/g, " ").trim() : "";
+          if (href && label) {
+            const a = document.createElement("a");
+            a.setAttribute("href", href);
+            a.textContent = label;
+            textCell.appendChild(a);
+          } else if (label) {
+            const p = document.createElement("p");
+            p.textContent = label;
+            textCell.appendChild(p);
+          }
+          cells.push([imageCell, textCell]);
+        });
+      }
+    }
+    if (!cards.length) {
+      const offers = Array.from(element.querySelectorAll(".offer-container"));
+      if (offers.length) {
+        offers.forEach((offer) => {
+          const imageCell = document.createDocumentFragment();
+          const textCell = document.createDocumentFragment();
+          textCell.appendChild(document.createComment(" field:text "));
+          const parts = [];
+          const cat = offer.querySelector(".title-box");
+          const heading = offer.querySelector("h2, h3, h4, h5");
+          const desc = offer.querySelector(".info-box");
+          const valid = offer.querySelector(".valid-box");
+          if (cat) {
+            const p = document.createElement("p");
+            p.textContent = cat.textContent.replace(/\s+/g, " ").trim();
+            parts.push(p);
+          }
+          if (heading) parts.push(heading.cloneNode(true));
+          if (desc) {
+            const p = document.createElement("p");
+            p.textContent = desc.textContent.replace(/\s+/g, " ").trim();
+            parts.push(p);
+          }
+          if (valid) {
+            const p = document.createElement("p");
+            p.textContent = valid.textContent.replace(/\s+/g, " ").trim();
+            parts.push(p);
+          }
+          parts.forEach((n) => textCell.appendChild(n));
+          if (parts.length) cells.push([imageCell, textCell]);
+        });
+      }
     }
     cards.forEach((card) => {
       const img = card.querySelector("img");
@@ -686,6 +772,37 @@ var CustomImportScript = (() => {
   var transformers = [transform];
   var TEMPLATES = [
     {
+      "name": "credit-cards-product",
+      "urls": [
+        "https://www.kotak.bank.in/en/personal-banking/cards/credit-cards.html"
+      ],
+      "representativeUrl": "https://www.kotak.bank.in/en/personal-banking/cards/credit-cards.html",
+      "coverageGaps": [],
+      "description": "Product page: hero carousel, product card grids, offer slider, and FAQ/info accordions",
+      "blocks": [
+        {
+          "name": "carousel-banner",
+          "instances": [
+            ".heroslider.section"
+          ]
+        },
+        {
+          "name": "cards-feature",
+          "instances": [
+            ".cards-list",
+            ".testimonial.section .our-solution-slider",
+            ".common-slider"
+          ]
+        },
+        {
+          "name": "accordion-rates",
+          "instances": [
+            ".prod-accordion"
+          ]
+        }
+      ]
+    },
+    {
       "name": "section-landing-tabbed",
       "urls": [
         "https://www.kotak.bank.in/en/about-us/careers.html",
@@ -939,7 +1056,6 @@ var CustomImportScript = (() => {
         "https://www.kotak.bank.in/en/help-center/personal.html",
         "https://www.kotak.bank.in/en/investor-relations/governance.html",
         "https://www.kotak.bank.in/en/kotak-international-business.html",
-        "https://www.kotak.bank.in/en/personal-banking/cards/credit-cards.html",
         "https://www.kotak.bank.in/en/privacy-policy.html",
         "https://www.kotak.bank.in/en/rates/forex-rates.html",
         "https://www.kotak.bank.in/en/rates/mclr-rate.html",

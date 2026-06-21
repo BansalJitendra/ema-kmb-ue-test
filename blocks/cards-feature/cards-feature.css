@@ -25,9 +25,11 @@
 }
 
 /* Live shows 6 cards per view in the products slider below "Need Help?" (the
-   rest sit on later slides). Cap any card grid to 6 to match that visible
-   count; smaller grids (3/2/4 cards) are unaffected. */
-.cards-feature > ul > li:nth-child(n+7) {
+   rest sit on later slides). Cap image-based card grids to 6 to match that
+   visible count; smaller grids (3/2/4 cards) are unaffected. Text-only card
+   grids (e.g. the credit-cards offers strip with 12 items, or testimonial
+   reviews) are intentionally exempt so all their items remain visible. */
+.cards-feature > ul:has(.cards-feature-card-image) > li:nth-child(n+7) {
   display: none;
 }
 

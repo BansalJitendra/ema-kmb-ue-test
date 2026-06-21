@@ -18,6 +18,68 @@ export default function parse(element, { document }) {
     cards = Array.from(element.querySelectorAll('.feature-card, .col-md-4 .card, .card'));
   }
 
+  // Product-card grid (`.cards-list`): each card is `.mf-sm-cards` wrapping an
+  // `<a>` with a `.card-img` image and a `.card-title` label. Map to one row
+  // per card: image + (title link).
+  if (!cards.length) {
+    const productCards = Array.from(element.querySelectorAll('.mf-sm-cards'));
+    if (productCards.length) {
+      productCards.forEach((card) => {
+        const img = card.querySelector('img');
+        const link = card.querySelector('a');
+        const title = card.querySelector('.card-title');
+        const href = link ? link.getAttribute('href') || '' : '';
+
+        const imageCell = document.createDocumentFragment();
+        if (img) {
+          imageCell.appendChild(document.createComment(' field:image '));
+          imageCell.appendChild(img.cloneNode(true));
+        }
+
+        const textCell = document.createDocumentFragment();
+        textCell.appendChild(document.createComment(' field:text '));
+        const label = title ? title.textContent.replace(/\s+/g, ' ').trim() : (link ? link.textContent.replace(/\s+/g, ' ').trim() : '');
+        if (href && label) {
+          const a = document.createElement('a');
+          a.setAttribute('href', href);
+          a.textContent = label;
+          textCell.appendChild(a);
+        } else if (label) {
+          const p = document.createElement('p');
+          p.textContent = label;
+          textCell.appendChild(p);
+        }
+
+        cells.push([imageCell, textCell]);
+      });
+    }
+  }
+
+  // Offer cards (`.offer-container`): no image; carry a category label
+  // (`.title-box`), an `h4` title, a description (`.info-box`), a validity
+  // (`.valid-box`) and a CTA. Map to a text-only card row.
+  if (!cards.length) {
+    const offers = Array.from(element.querySelectorAll('.offer-container'));
+    if (offers.length) {
+      offers.forEach((offer) => {
+        const imageCell = document.createDocumentFragment();
+        const textCell = document.createDocumentFragment();
+        textCell.appendChild(document.createComment(' field:text '));
+        const parts = [];
+        const cat = offer.querySelector('.title-box');
+        const heading = offer.querySelector('h2, h3, h4, h5');
+        const desc = offer.querySelector('.info-box');
+        const valid = offer.querySelector('.valid-box');
+        if (cat) { const p = document.createElement('p'); p.textContent = cat.textContent.replace(/\s+/g, ' ').trim(); parts.push(p); }
+        if (heading) parts.push(heading.cloneNode(true));
+        if (desc) { const p = document.createElement('p'); p.textContent = desc.textContent.replace(/\s+/g, ' ').trim(); parts.push(p); }
+        if (valid) { const p = document.createElement('p'); p.textContent = valid.textContent.replace(/\s+/g, ' ').trim(); parts.push(p); }
+        parts.forEach((n) => textCell.appendChild(n));
+        if (parts.length) cells.push([imageCell, textCell]);
+      });
+    }
+  }
+
   cards.forEach((card) => {
     const img = card.querySelector('img');
 

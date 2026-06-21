@@ -2,8 +2,15 @@
   "status": "success",
   "url": "https://www.kotak.bank.in/en/personal-banking/cards/credit-cards.html",
   "path": "en/personal-banking/cards/credit-cards",
-  "timestamp": "2026-06-19T08:38:50.108Z",
+  "timestamp": "2026-06-21T08:39:33.777Z",
   "title": "Credit Card - Apply for Credit Card Online & Get Instant Approval",
-  "template": "calculator-form-carousel",
-  "blocks": []
+  "template": "credit-cards-product",
+  "blocks": [
+    "carousel-banner",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "accordion-rates",
+    "accordion-rates"
+  ]
 }

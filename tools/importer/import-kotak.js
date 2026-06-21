@@ -49,6 +49,37 @@ const transformers = [kotakCleanup];
 // ALL PAGE TEMPLATES (embedded from page-templates.json)
 const TEMPLATES = [
   {
+    "name": "credit-cards-product",
+    "urls": [
+      "https://www.kotak.bank.in/en/personal-banking/cards/credit-cards.html"
+    ],
+    "representativeUrl": "https://www.kotak.bank.in/en/personal-banking/cards/credit-cards.html",
+    "coverageGaps": [],
+    "description": "Product page: hero carousel, product card grids, offer slider, and FAQ/info accordions",
+    "blocks": [
+      {
+        "name": "carousel-banner",
+        "instances": [
+          ".heroslider.section"
+        ]
+      },
+      {
+        "name": "cards-feature",
+        "instances": [
+          ".cards-list",
+          ".testimonial.section .our-solution-slider",
+          ".common-slider"
+        ]
+      },
+      {
+        "name": "accordion-rates",
+        "instances": [
+          ".prod-accordion"
+        ]
+      }
+    ]
+  },
+  {
     "name": "section-landing-tabbed",
     "urls": [
       "https://www.kotak.bank.in/en/about-us/careers.html",
@@ -302,7 +333,6 @@ const TEMPLATES = [
       "https://www.kotak.bank.in/en/help-center/personal.html",
       "https://www.kotak.bank.in/en/investor-relations/governance.html",
       "https://www.kotak.bank.in/en/kotak-international-business.html",
-      "https://www.kotak.bank.in/en/personal-banking/cards/credit-cards.html",
       "https://www.kotak.bank.in/en/privacy-policy.html",
       "https://www.kotak.bank.in/en/rates/forex-rates.html",
       "https://www.kotak.bank.in/en/rates/mclr-rate.html",

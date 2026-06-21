@@ -21,6 +21,37 @@ export default function parse(element, { document }) {
     items = Array.from(element.querySelectorAll('.accordion-item, .faq-item, .panel'));
   }
 
+  // Product-page accordion (`.prod-accordion`): items are NOT wrapped — the
+  // title (`h2.target`) and body (`.toggle-ctnt`) are flat siblings. Pair each
+  // heading with the `.toggle-ctnt` that follows it.
+  if (!items.length) {
+    const headings = Array.from(element.querySelectorAll('h2.target, h3.target'));
+    if (headings.length) {
+      headings.forEach((titleEl) => {
+        // The body is the next sibling (or nearest following) `.toggle-ctnt`.
+        let contentEl = titleEl.nextElementSibling;
+        while (contentEl && !contentEl.classList.contains('toggle-ctnt')) {
+          contentEl = contentEl.nextElementSibling;
+        }
+
+        const summaryFrag = document.createDocumentFragment();
+        summaryFrag.appendChild(document.createComment(' field:summary '));
+        const clone = titleEl.cloneNode(true);
+        clone.querySelectorAll('figure, img, i, .icon-more-arow').forEach((n) => n.remove());
+        summaryFrag.appendChild(document.createTextNode(clone.textContent.replace(/\s+/g, ' ').trim()));
+
+        const contentFrag = document.createDocumentFragment();
+        contentFrag.appendChild(document.createComment(' field:text '));
+        if (contentEl) {
+          const body = contentEl.querySelector('.cmp-text, .block') || contentEl;
+          Array.from(body.childNodes).forEach((n) => contentFrag.appendChild(n.cloneNode(true)));
+        }
+
+        cells.push([summaryFrag, contentFrag]);
+      });
+    }
+  }
+
   items.forEach((item) => {
     // Title / summary: prefer the heading text, strip icons/figures.
     const titleEl = item.querySelector('h2.target, h2, h3, .accordion-title, .faq-question');
