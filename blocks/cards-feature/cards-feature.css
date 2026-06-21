@@ -101,3 +101,50 @@
   color: var(--brand-primary);
   text-decoration: underline;
 }
+
+/* ── Offers variant ("Credit Card offers you don't want to miss!") ───────────
+   Imageless offer tiles: a small category label, bold title, description and a
+   validity line. No image slot, so the card content fills the tile from the
+   top (matching the live offer strip rather than leaving a blank image gap). */
+/* stylelint-disable no-descending-specificity */
+.cards-feature-offers > ul > li {
+  padding: 20px;
+  justify-content: flex-start;
+}
+
+/* category label (e.g. "Just Added") as a subtle pill */
+.cards-feature-offers .cards-feature-card-body > p:first-child {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: #fdecea;
+  color: var(--brand-primary);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.cards-feature-offers .cards-feature-card-body h3,
+.cards-feature-offers .cards-feature-card-body h4 {
+  margin: 0 0 8px;
+  font-size: 19px;
+  line-height: 1.25;
+  color: var(--brand-secondary);
+}
+
+.cards-feature-offers .cards-feature-card-body p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-color);
+}
+
+/* validity line (last paragraph) — muted, smaller */
+.cards-feature-offers .cards-feature-card-body > p:last-child {
+  margin-top: auto;
+  padding-top: 8px;
+  color: #777;
+  font-size: 12.5px;
+}

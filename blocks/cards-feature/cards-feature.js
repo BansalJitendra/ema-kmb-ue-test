@@ -23,11 +23,25 @@ export default function decorate(block) {
     moveInstrumentation(row, li);
     while (row.firstElementChild) li.append(row.firstElementChild);
     [...li.children].forEach((div) => {
-      if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-feature-card-image';
-      else div.className = 'cards-feature-card-body';
+      if (div.children.length === 1 && div.querySelector('picture')) {
+        div.className = 'cards-feature-card-image';
+      } else if (div.textContent.trim() === '' && !div.querySelector('picture, img')) {
+        // Empty cell (e.g. the absent image slot on offer cards) — drop it so it
+        // doesn't render as a blank gap at the top of the card.
+        div.remove();
+      } else {
+        div.className = 'cards-feature-card-body';
+      }
     });
     ul.append(li);
   });
+
+  // Offer-style blocks (e.g. the credit-cards "Credit Card offers" strip) have
+  // no card images at all. Flag the block so the CSS can render compact text
+  // tiles instead of reserving space for a missing image.
+  if (!ul.querySelector('.cards-feature-card-image')) {
+    block.classList.add('cards-feature-offers');
+  }
   ul.querySelectorAll('picture > img').forEach((img) => {
     // Only optimize same-origin (ingested) images; external URLs are served as-is.
     if (img.src.startsWith(window.location.origin) || img.src.startsWith('/')) {
