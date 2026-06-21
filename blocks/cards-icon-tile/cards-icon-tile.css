@@ -18,7 +18,7 @@
 
 @media (width >= 900px) {
   .cards-icon-tile > ul {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
