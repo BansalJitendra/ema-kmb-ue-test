@@ -1,27 +1,65 @@
+/* Icon tiles (e.g. "Important Customer Information"): a responsive grid of
+   bordered tiles, each with a small icon on the left and a label link on the
+   right — matching the live layout. */
 .cards-icon-tile > ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (width >= 600px) {
+  .cards-icon-tile > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .cards-icon-tile > ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .cards-icon-tile > ul > li {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
   border: 1px solid #dadada;
+  border-radius: 8px;
   background-color: var(--background-color);
 }
 
-.cards-icon-tile .cards-icon-tile-card-body {
-  margin: 16px;
-}
-
 .cards-icon-tile .cards-icon-tile-card-image {
+  flex: 0 0 auto;
   line-height: 0;
 }
 
-.cards-icon-tile > ul > li img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+.cards-icon-tile .cards-icon-tile-card-image img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.cards-icon-tile .cards-icon-tile-card-body {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: var(--body-font-size-xs);
+}
+
+.cards-icon-tile .cards-icon-tile-card-body p {
+  margin: 0;
+}
+
+.cards-icon-tile .cards-icon-tile-card-body a:any-link {
+  color: var(--brand-secondary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.cards-icon-tile .cards-icon-tile-card-body a:hover {
+  color: var(--brand-primary);
 }

@@ -330,6 +330,58 @@ function normalizeContent(document) {
     }
   }
 
+  // 1b4. The "Important Customer Information" section was scraped as flat default
+  // content: an <h2> followed by a plain <ul> whose <li>s each hold an icon link
+  // and a text link. It renders as a bulleted list rather than the live tile
+  // grid. Convert that <ul> into a cards-icon-tile block — one row per item,
+  // cell 1 = icon image, cell 2 = label link — so it lays out as icon tiles.
+  const iciHeading = [...main.querySelectorAll('h2')].find((h) => h.textContent.trim() === 'Important Customer Information');
+  if (iciHeading) {
+    let ul = iciHeading.nextElementSibling;
+    while (ul && ul.tagName !== 'UL' && ul.tagName !== 'H2') ul = ul.nextElementSibling;
+    if (ul && ul.tagName === 'UL' && !ul.closest('div.cards-icon-tile')) {
+      const block = document.createElement('div');
+      block.className = 'cards-icon-tile';
+      [...ul.children].filter((li) => li.tagName === 'LI').forEach((li) => {
+        const links = [...li.querySelectorAll('a')];
+        const iconImg = li.querySelector('img');
+        // the label link is the one with visible text
+        const labelLink = links.find((a) => a.textContent.trim().length > 0);
+        if (!labelLink) return;
+        const row = document.createElement('div');
+        const imgCell = document.createElement('div');
+        if (iconImg) {
+          const picture = document.createElement('picture');
+          const img = document.createElement('img');
+          // md2jcr's convertIcons rule turns any src ending in `.svg` into a
+          // `:name:` icon token (which won't resolve for these external source
+          // icons). Append a query so the URL no longer ends in `.svg`, keeping
+          // it a real image; the server still serves the SVG.
+          let iconSrc = iconImg.getAttribute('src') || '';
+          if (/\.svg$/i.test(iconSrc)) iconSrc += '?icon';
+          img.src = iconSrc;
+          img.alt = labelLink.textContent.trim();
+          img.loading = 'lazy';
+          picture.appendChild(img);
+          imgCell.appendChild(picture);
+        }
+        const textCell = document.createElement('div');
+        const p = document.createElement('p');
+        const a = document.createElement('a');
+        a.setAttribute('href', labelLink.getAttribute('href') || '');
+        a.textContent = labelLink.textContent.trim();
+        p.appendChild(a);
+        textCell.appendChild(p);
+        row.append(imgCell, textCell);
+        block.appendChild(row);
+      });
+      if (block.children.length) {
+        ul.parentNode.insertBefore(block, ul);
+        ul.remove();
+      }
+    }
+  }
+
   // 1c. columns-media: md2jcr's columns handler drops images that are wrapped in
   // a link (<a><picture><img></picture></a>) and external — it emits an empty
   // button, losing the thumbnail. Unwrap such images to a standalone <picture>

@@ -15,9 +15,13 @@ export default function decorate(block) {
     ul.append(li);
   });
   ul.querySelectorAll('picture > img').forEach((img) => {
-    const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
-    moveInstrumentation(img, optimizedPic.querySelector('img'));
-    img.closest('picture').replaceWith(optimizedPic);
+    // Only optimize same-origin (ingested) images; external icon URLs (e.g. the
+    // svg icons hosted on the source site) are served as-is.
+    if (img.src.startsWith(window.location.origin) || img.src.startsWith('/')) {
+      const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
+      moveInstrumentation(img, optimizedPic.querySelector('img'));
+      img.closest('picture').replaceWith(optimizedPic);
+    }
   });
   block.textContent = '';
   block.append(ul);
