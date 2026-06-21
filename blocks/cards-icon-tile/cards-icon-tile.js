@@ -2,6 +2,24 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
+  // External icon URLs come through as a link to an image file (EDS only builds
+  // <picture> for ingested same-origin media; external SVGs stay as links).
+  // Convert such links into a <picture><img> so the tile icon renders. The
+  // generator appends a `?icon` query to the .svg URL so md2jcr keeps it as an
+  // image rather than an icon token — match that here.
+  block.querySelectorAll('a[href]').forEach((link) => {
+    if (/\.(jpe?g|png|webp|gif|svg)(\?|$|\.)/i.test(link.getAttribute('href'))) {
+      const img = document.createElement('img');
+      img.src = link.getAttribute('href');
+      // the link text is just the raw asset URL, not a useful alt — keep the
+      // icon decorative.
+      img.alt = '';
+      img.loading = 'lazy';
+      const picture = document.createElement('picture');
+      picture.append(img);
+      link.replaceWith(picture);
+    }
+  });
   /* change to ul, li */
   const ul = document.createElement('ul');
   [...block.children].forEach((row) => {
