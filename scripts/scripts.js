@@ -71,12 +71,76 @@ function autolinkModals(doc) {
 }
 
 /**
+ * The credit-cards page ends with three link-list groups ("Credit Card
+ * Services", "Credit Cards Guide", "What's New?") that were migrated as flat
+ * default content (a heading <p> + a <ul> of icon links + a trailing "view all"
+ * <p>). Group each into a row and wrap the trio in a `link-columns` block so
+ * they render as three side-by-side cards like the live page.
+ */
+function buildLinkColumns(main) {
+  const HEADERS = ['Credit Card Services', 'Credit Cards Guide', "What's New?", 'What’s New?'];
+  const isHeader = (el) => el && el.tagName === 'P'
+    && HEADERS.includes(el.textContent.trim());
+
+  // Find header <p>s each immediately followed by a <ul>.
+  const starts = [...main.querySelectorAll('p')].filter((p) => {
+    const next = p.nextElementSibling;
+    return isHeader(p) && next && next.tagName === 'UL';
+  });
+  if (starts.length < 2) return;
+
+  // All groups must share a parent (the default-content wrapper) and be
+  // consecutive enough to replace in place.
+  const parent = starts[0].parentElement;
+  if (!starts.every((p) => p.parentElement === parent)) return;
+
+  const rows = [];
+  starts.forEach((header) => {
+    const headCell = document.createElement('div');
+    const h = document.createElement('p');
+    h.textContent = header.textContent.trim();
+    headCell.append(h);
+
+    const bodyCell = document.createElement('div');
+    const ul = header.nextElementSibling;
+    bodyCell.append(ul.cloneNode(true));
+    // trailing "view all" link paragraph, if present
+    const after = ul.nextElementSibling;
+    if (after && after.tagName === 'P' && after.querySelector('a')) {
+      bodyCell.append(after.cloneNode(true));
+    }
+    rows.push([headCell, bodyCell]);
+  });
+
+  // Build the block element: <div class="link-columns"><div><div>head</div><div>body</div></div>…
+  const block = document.createElement('div');
+  block.className = 'link-columns';
+  rows.forEach(([head, body]) => {
+    const row = document.createElement('div');
+    row.append(head, body);
+    block.append(row);
+  });
+
+  // Remove the original flat nodes (header, ul, optional view-all p) for each group.
+  starts.forEach((header) => {
+    const ul = header.nextElementSibling;
+    const after = ul.nextElementSibling;
+    if (after && after.tagName === 'P' && after.querySelector('a')) after.remove();
+    ul.remove();
+    header.remove();
+  });
+
+  // Insert the block where the first group was.
+  parent.append(block);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
-function buildAutoBlocks() {
+function buildAutoBlocks(main) {
   try {
-    // TODO: add auto block, if needed
+    buildLinkColumns(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
