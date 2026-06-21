@@ -121,12 +121,16 @@
 }
 
 /* Light-artwork banners (e.g. customer-service hero): use dark text like live,
-   since white text would be unreadable on the light background. */
+   since white text would be unreadable on the light background. Headings are
+   #333; the intro/body copy is pure black, matching the live page. */
 .carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content,
 .carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content h1,
-.carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content h2,
-.carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content p {
+.carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content h2 {
   color: var(--text-color);
+}
+
+.carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content p {
+  color: #000;
 }
 
 .carousel-banner .carousel-banner-slide-indicators {
