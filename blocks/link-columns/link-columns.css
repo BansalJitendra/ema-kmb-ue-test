@@ -72,14 +72,31 @@
   margin: 0;
 }
 
+/* EDS auto-wraps a standalone link as a.button in p.button-container and the
+   global styles paint a solid red pill. Neutralize that so the links read as
+   plain text like the live page. */
+.link-columns .link-columns-body .button-container {
+  margin: 0;
+}
+
+.link-columns .link-columns-body a.button:any-link,
 .link-columns .link-columns-body a:any-link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
   color: var(--text-color, #333);
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
+  white-space: normal;
 }
 
+.link-columns .link-columns-body li a.button:hover,
 .link-columns .link-columns-body li a:hover {
+  background: none;
   color: var(--brand-primary, #ed4223);
   text-decoration: underline;
 }
