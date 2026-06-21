@@ -120,6 +120,15 @@
   border-color: #d63519;
 }
 
+/* Light-artwork banners (e.g. customer-service hero): use dark text like live,
+   since white text would be unreadable on the light background. */
+.carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content,
+.carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content h1,
+.carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content h2,
+.carousel-banner .carousel-banner-slide-light .carousel-banner-slide-content p {
+  color: var(--text-color);
+}
+
 .carousel-banner .carousel-banner-slide-indicators {
   display: flex;
   flex-wrap: wrap;

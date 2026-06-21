@@ -71,6 +71,19 @@ function bindEvents(block) {
   });
 }
 
+/* Some banners are light artwork (e.g. the customer-service hero) and need dark
+   text, while the homepage banners are dark and need white text. The source
+   banner images are cross-origin so canvas brightness sampling is blocked;
+   instead match known light-banner filenames and flag the slide so the CSS can
+   use dark text. */
+const LIGHT_BANNER_RE = /(customer-service|reach-us|contact-us|help-center)/i;
+function applyContrastClass(slide) {
+  const img = slide.querySelector('.carousel-banner-slide-image img');
+  if (img && LIGHT_BANNER_RE.test(img.getAttribute('src') || '')) {
+    slide.classList.add('carousel-banner-slide-light');
+  }
+}
+
 function createSlide(row, slideIndex, carouselId) {
   const slide = document.createElement('li');
   slide.dataset.slideIndex = slideIndex;
@@ -147,6 +160,7 @@ export default async function decorate(block) {
   rows.forEach((row, idx) => {
     const slide = createSlide(row, idx, carouselId);
     moveInstrumentation(row, slide);
+    applyContrastClass(slide);
     slidesWrapper.append(slide);
 
     if (slideIndicators) {
