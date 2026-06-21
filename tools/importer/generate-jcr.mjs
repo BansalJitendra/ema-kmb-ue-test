@@ -78,6 +78,31 @@ function normalizeContent(document) {
     }
   });
 
+  // 0a2. strip leaked modal "close" button images (clientlib close.png / cross
+  // icons) that flattened in from hidden popups and render as a stray broken
+  // image. Remove the img and any now-empty wrapper.
+  main.querySelectorAll('img[src*="clientlib-site/images/close"], img[src*="/close.png"], img[src*="/cross.png"]').forEach((img) => {
+    const picture = img.closest('picture');
+    const wrapper = (picture || img).closest('p');
+    (picture || img).remove();
+    if (wrapper && wrapper.textContent.trim() === '' && !wrapper.querySelector('img, picture, a, svg')) {
+      wrapper.remove();
+    }
+  });
+
+  // 0a3. drop decorative inline SVG icons that sit inline before text in a
+  // paragraph (e.g. "<svg-icon> Email us"). md2jcr turns the .svg into a broken
+  // `:name:` icon token glued to the label. Remove such inline icons when the
+  // paragraph also has meaningful text, keeping the text clean.
+  main.querySelectorAll('p img[src$=".svg"], p picture img[src$=".svg"]').forEach((img) => {
+    const p = img.closest('p');
+    if (!p) return;
+    const textLen = p.textContent.replace(/\s+/g, ' ').trim().length;
+    if (textLen > 0) {
+      (img.closest('picture') || img).remove();
+    }
+  });
+
   // Some pages leak the loader.gif (and other clientlib icon assets) as bare
   // anchor links to the asset URL rather than images. Drop those links; if that
   // empties their <li>/<p> wrapper, drop the wrapper too.
