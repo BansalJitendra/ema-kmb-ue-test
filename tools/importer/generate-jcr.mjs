@@ -326,6 +326,46 @@ function normalizeContent(document) {
     });
   });
 
+  // 1b2c. The credit-cards "Credit Card offers you don't want to miss!" strip
+  // builds offer cards (cards-feature) with an empty image cell — the source
+  // offer images are lazy-loaded from a backend feed, so the scrape captured no
+  // src. Inject the recovered brand images (keyed by offer title) so each offer
+  // card shows its image like the live carousel.
+  const OFFER_IMAGES = {
+    'Eco Mobility': 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/travel-offer/eco-mobility-t.jpg',
+    Amazon: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/amazon-offer-t.jpg',
+    Canon: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/electronics/canon-t.jpg',
+    Yatra: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/travel-offer/yatra-t.jpg',
+    'Paytm Flights': 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/travel-offer/paytm-flights-t.jpg',
+    Ixigo: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/travel-offer/Ixigo-t.jpg',
+    Ather: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/others/atheroffer-t.jpg',
+    'River Cash': 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/others/river-cash-t.jpg',
+    Godrej: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/electronics/godrej-t.jpg',
+    'Hero Motorbikes': 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/others/memi-two-wheeler-t.jpg',
+    KTM: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/others/ktmoffer-t.jpg',
+    Liebherr: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/electronics/liebherr-web-product-t.jpg',
+  };
+  main.querySelectorAll('div.cards-feature').forEach((block) => {
+    [...block.children].filter((r) => r.tagName === 'DIV').forEach((row) => {
+      const cells = [...row.children].filter((c) => c.tagName === 'DIV');
+      if (cells.length < 2) return;
+      const [imgCell, textCell] = cells;
+      // Only offer cards: empty image cell + a title matching the offer map.
+      if (imgCell.querySelector('img') || imgCell.textContent.trim() !== '') return;
+      const heading = textCell.querySelector('h2, h3, h4, h5');
+      const title = heading ? heading.textContent.trim() : '';
+      const src = OFFER_IMAGES[title];
+      if (!src) return;
+      const p = document.createElement('p');
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = title;
+      img.loading = 'lazy';
+      p.appendChild(img);
+      imgCell.appendChild(p);
+    });
+  });
+
   // 1b3. The customer-service "Download Forms" section was scraped as flat
   // default content (an <h2> followed by repeating <h4> + description <p> +
   // "Download forms" link <p>), so it renders as plain text with no cards or
