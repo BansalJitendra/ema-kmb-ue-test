@@ -179,6 +179,30 @@ function normalizeContent(document) {
     }
   });
 
+  // 0b. remove the leaked "Write to us" modal popup. The source has a hidden
+  // "Write to us" dialog (heading + close.png + "Select your preferred method."
+  // + "Email us" + a Send-an-email link) that flattened into the page; the live
+  // site does not show it. Detect the heading by its signature follow-up text
+  // and remove the heading plus its following siblings up to the next heading.
+  [...main.querySelectorAll('h2')].forEach((h) => {
+    if (h.textContent.trim() !== 'Write to us') return;
+    // signature: a following sibling paragraph "Select your preferred method."
+    let probe = h.nextElementSibling;
+    let isModal = false;
+    for (let i = 0; i < 4 && probe && !/^H[1-6]$/.test(probe.tagName); i += 1) {
+      if (/^Select your preferred method/i.test(probe.textContent.trim())) { isModal = true; break; }
+      probe = probe.nextElementSibling;
+    }
+    if (!isModal) return;
+    let node = h.nextElementSibling;
+    while (node && !/^H[1-6]$/.test(node.tagName)) {
+      const next = node.nextElementSibling;
+      node.remove();
+      node = next;
+    }
+    h.remove();
+  });
+
   // 1a. carousel-icons ("Need Help?") tiles: the source concatenates the tile
   // title and its description into one link with no delimiter (e.g.
   // "Visit Help CenterGet information on all topics"). Split each link's text
