@@ -468,6 +468,91 @@ function restoreBenefitsCarousel(main) {
   promo.replaceWith(block);
 }
 
+// "Explore other savings account options for existing Kotak Bank customers"
+// migrated as pairs of <p><a>(thumbnail)</a></p> + <p><a>Variant Name</a></p>,
+// but decorateButtons strips the image from the empty thumbnail link, leaving
+// plain text links. Live shows small product-thumbnail tiles with the name
+// below. Rebuild as an `icon-grid` of image tiles, keyed by the variant's href
+// slug to its thumbnail (the source images, recovered by slug).
+const EXPLORE_THUMBS = {
+  'pro-savings-account': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/Kotak-Pro-Savings-Account-Thumb.jpg',
+  'edge-savings-account': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/Kotak-Edge-Savings_thumb.jpg',
+  'classic-savings-account': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/classic-savings-account.png',
+  'nova-savings-account': 'https://www.kotak.bank.in/content/dam/Kotak/Recycle-Bin/Herobanner/Kotak-Nova-Savings-Account-Thumb.jpg',
+  'platina-savings-account': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/platina_savings_account.png',
+  'alpha-savings-account': 'https://www.kotak.bank.in/content/dam/Kotak/journey-adapts/alpha-savings-and-investments-programme.png',
+  'jifi-discontinued': 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/jifi-saving-account.png',
+  'ace-savings-account': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/ace-t.jpg',
+  'everyday-saving-account': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/everyday-t.jpg',
+  'my-family-savings-account': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/my-family-savings-account.jpg',
+};
+function buildExploreVariants(main) {
+  const heading = [...main.querySelectorAll('h2')]
+    .find((h) => /^Explore other savings account options/i.test(h.textContent.replace(/\s+/g, ' ').trim()));
+  if (!heading) return;
+  const parent = heading.parentElement;
+
+  const items = [];
+  const consumed = [];
+  let node = heading.nextElementSibling;
+  while (node && node.tagName !== 'H2') {
+    const next = node.nextElementSibling;
+    const a = node.tagName === 'P' ? node.querySelector('a[href]') : null;
+    const label = a ? a.textContent.replace(/\s+/g, ' ').trim() : '';
+    if (a) {
+      const href = a.getAttribute('href') || '';
+      const slug = href.replace(/\.html$/, '').split('/').pop();
+      if (label) {
+        // a named variant link — pair with the preceding (image) link if same slug
+        const prev = items.length ? items[items.length - 1] : null;
+        if (prev && !prev.label && prev.slug === slug) {
+          prev.label = label;
+        } else {
+          items.push({ slug, href, label });
+        }
+      } else {
+        // image-only link (thumbnail was stripped) — start a tile
+        items.push({ slug, href, label: '' });
+      }
+      consumed.push(node);
+    } else {
+      // keep the intro disclaimer paragraph; stop consuming it
+      consumed.push(node);
+    }
+    node = next;
+  }
+
+  const tiles = items.filter((it) => it.label && EXPLORE_THUMBS[it.slug]);
+  if (tiles.length < 3) return;
+
+  const block = document.createElement('div');
+  block.className = 'icon-grid icon-grid-variants';
+  tiles.forEach((it) => {
+    const row = document.createElement('div');
+    const iconCell = document.createElement('div');
+    const img = document.createElement('img');
+    img.src = EXPLORE_THUMBS[it.slug];
+    img.alt = it.label;
+    img.loading = 'lazy';
+    iconCell.append(img);
+    const labelCell = document.createElement('div');
+    const p = document.createElement('p');
+    const link = document.createElement('a');
+    link.setAttribute('href', it.href);
+    link.textContent = it.label;
+    p.append(link);
+    labelCell.append(p);
+    row.append(iconCell, labelCell);
+    block.append(row);
+  });
+
+  // Remove the consumed links but keep the disclaimer paragraph in place.
+  consumed.forEach((el) => {
+    if (!/no longer available/i.test(el.textContent)) el.remove();
+  });
+  parent.insertBefore(block, heading.nextSibling);
+}
+
 // Resolve a tokenized icon (<span class="icon icon-NAME">) or a broken
 // /icons/NAME.svg <img> inside `el` to a real Kotak SVG <img>. Returns the img
 // or null.
@@ -992,6 +1077,7 @@ function buildAutoBlocks(main) {
     removeLeakedModal(main);
     fixTokenizedIcons(main);
     restoreBenefitsCarousel(main);
+    buildExploreVariants(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);

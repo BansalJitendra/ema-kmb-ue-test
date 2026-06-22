@@ -90,3 +90,23 @@
   line-height: 1.4;
   color: var(--text-color, #555);
 }
+
+/* "Explore other savings account options" variant — product-thumbnail tiles
+   (a small card image with the variant name below), like live. */
+.icon-grid-variants .icon-grid-icon {
+  width: 100%;
+  height: auto;
+}
+
+.icon-grid-variants .icon-grid-icon img {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.icon-grid-variants .icon-grid-label a:any-link {
+  font-size: 14px;
+}
