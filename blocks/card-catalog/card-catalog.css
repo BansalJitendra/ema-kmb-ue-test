@@ -1,0 +1,116 @@
+/* Product card catalog ("Types of Debit cards") — responsive grid of card
+   tiles, each with the card image on top, then title, benefit bullets, an
+   optional discontinued note and the Know More / T&C links. */
+
+/* stylelint-disable no-descending-specificity */
+.card-catalog {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (width >= 600px) {
+  .card-catalog {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 900px) {
+  .card-catalog {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.card-catalog .card-catalog-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e8ebf4;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--background-color, #fff);
+  box-shadow: 0 1px 6px rgb(15 52 100 / 8%);
+}
+
+.card-catalog .card-catalog-card-image {
+  line-height: 0;
+}
+
+.card-catalog .card-catalog-card-image picture:not(:first-child),
+.card-catalog .card-catalog-card-image img:not(:first-child) {
+  display: none;
+}
+
+.card-catalog .card-catalog-card-image img {
+  width: 100%;
+  aspect-ratio: 380 / 214;
+  object-fit: cover;
+}
+
+.card-catalog .card-catalog-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 16px 18px 20px;
+}
+
+.card-catalog .card-catalog-card-body > p:first-child {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--brand-secondary, #003874);
+}
+
+/* "(Discontinued from New Issuance)" note */
+.card-catalog .card-catalog-card-body > p.card-catalog-note {
+  margin: 0 0 8px;
+  color: #999;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.card-catalog .card-catalog-card-body ul {
+  margin: 0 0 14px;
+  padding-left: 18px;
+  flex: 1 1 auto;
+}
+
+.card-catalog .card-catalog-card-body li {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-color, #333);
+}
+
+/* link row: Know More (primary) + T&C apply (muted) */
+.card-catalog .card-catalog-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: auto;
+}
+
+.card-catalog .card-catalog-card-body .button-container {
+  margin: 0;
+}
+
+.card-catalog .card-catalog-card-body a.button:any-link,
+.card-catalog .card-catalog-card-body a:any-link {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--brand-primary, #ed4223);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: normal;
+}
+
+.card-catalog .card-catalog-card-body a:hover {
+  text-decoration: underline;
+}

@@ -135,12 +135,112 @@ function buildLinkColumns(main) {
 }
 
 /**
+ * The debit-cards "Types of Debit cards" catalog migrated as a flat stack of
+ * loose paragraphs/lists (per card: an image <p>, a title <p>, a bullets <ul>,
+ * optional "(Discontinued…)" / "T&C apply" / "Compare" <p>s, and a "Know More"
+ * <p>). Group each card into a row and wrap them all in a `card-catalog` block
+ * so they render as a card grid like the live page. Also strips the leaked
+ * compare-tray controls ("Compare", "Add account for comparison", "Close
+ * Compare…") which are JS UI artifacts, not content.
+ */
+function buildCardCatalog(main) {
+  const heading = [...main.querySelectorAll('h2')]
+    .find((h) => h.textContent.trim() === 'Types of Debit cards');
+  if (!heading) return;
+
+  const parent = heading.parentElement;
+  const JUNK = /^(Compare|Add account for comparison|Close Compare.*|×)$/;
+
+  // Walk siblings after the heading, building cards. Each card starts at an
+  // image paragraph; EDS split the source's two card images (mobile + desktop)
+  // into two consecutive image <p>s, so a new card only begins on an image <p>
+  // that follows body content (title/bullets) — consecutive leading image <p>s
+  // belong to the same card (we keep the first, drop the rest).
+  const cards = [];
+  const consumed = [];
+  let cur = null;
+  let node = heading.nextElementSibling;
+  while (node) {
+    const next = node.nextElementSibling;
+    const text = node.textContent.replace(/\s+/g, ' ').trim();
+    const isImageP = node.tagName === 'P' && node.querySelector('picture, img') && !text;
+
+    // A standalone modal/disclaimer block signals the end of the catalog.
+    if (node.tagName === 'P' && /^Disclaimer$/.test(text)) break;
+
+    if (isImageP) {
+      if (!cur || cur.body.length > 0) {
+        // start a new card (first image is the card thumbnail)
+        cur = { image: node, body: [] };
+        cards.push(cur);
+      }
+      // else: a second leading image for the current card — drop it
+      consumed.push(node);
+    } else if (cur) {
+      if (node.tagName === 'P' && JUNK.test(text)) {
+        consumed.push(node); // drop compare-tray junk
+      } else if (text || node.querySelector('a, li')) {
+        cur.body.push(node);
+        consumed.push(node);
+      } else {
+        consumed.push(node);
+      }
+    }
+    node = next;
+  }
+
+  if (cards.length < 2) return;
+
+  const block = document.createElement('div');
+  block.className = 'card-catalog';
+  cards.forEach((card) => {
+    const row = document.createElement('div');
+    const imgCell = document.createElement('div');
+    imgCell.append(card.image.cloneNode(true));
+
+    const bodyCell = document.createElement('div');
+    const links = [];
+    card.body.forEach((el) => {
+      const t = el.textContent.replace(/\s+/g, ' ').trim();
+      const clone = el.cloneNode(true);
+      if (el.tagName === 'P' && /Discontinued from New Issuance/i.test(t)) {
+        // some cards merge the note with a leaked "Compare" control — keep only
+        // the discontinued note text.
+        clone.className = 'card-catalog-note';
+        clone.textContent = '(Discontinued from New Issuance)';
+        bodyCell.append(clone);
+      } else if (el.tagName === 'P' && el.querySelector('a')) {
+        links.push(clone); // Know More / T&C apply
+      } else {
+        bodyCell.append(clone);
+      }
+    });
+    if (links.length) {
+      const linkRow = document.createElement('div');
+      linkRow.className = 'card-catalog-links';
+      links.forEach((l) => linkRow.append(l));
+      bodyCell.append(linkRow);
+    }
+
+    row.append(imgCell, bodyCell);
+    block.append(row);
+  });
+
+  // Remove the flat nodes and insert the block where the catalog began.
+  const anchor = consumed[0];
+  consumed.forEach((el) => el.remove());
+  if (anchor && anchor.parentNode === parent) parent.insertBefore(block, heading.nextSibling);
+  else parent.insertBefore(block, heading.nextSibling);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
     buildLinkColumns(main);
+    buildCardCatalog(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
