@@ -317,6 +317,28 @@ const GRID_ICONS = {
   icon: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Icon.svg',
 };
 
+// Some grid tiles (e.g. the "Unlock exciting deals…" offer categories) have no
+// icon token in the migrated content, so match their icon by label text.
+const GRID_ICONS_BY_LABEL = {
+  'Business Management & Marketing': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/business-mkt.png',
+  'ERP & Accounting': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/erp.png',
+  Logistics: 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/logistics.png',
+  'Human Resource': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/human-resource.png',
+  'Business Travel': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/business-travel.png',
+  'Co-working space': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/co-working.png',
+  'Taxation & Legal': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/tax.png',
+  'Healthcare Solutions': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/healthcare.png',
+  'Industry Insights': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/industry-insights.png',
+};
+
+function iconImg(url) {
+  const img = document.createElement('img');
+  img.src = url;
+  img.alt = '';
+  img.loading = 'lazy';
+  return img;
+}
+
 // Resolve a tokenized icon (<span class="icon icon-NAME">) or a broken
 // /icons/NAME.svg <img> inside `el` to a real Kotak SVG <img>. Returns the img
 // or null.
@@ -400,7 +422,9 @@ function buildOneIconGrid(heading) {
   tiles.forEach((it) => {
     const row = document.createElement('div');
     const iconCell = document.createElement('div');
-    if (it.icon) iconCell.append(it.icon);
+    const byLabel = GRID_ICONS_BY_LABEL[it.label];
+    const icon = it.icon || (byLabel ? iconImg(byLabel) : null);
+    if (icon) iconCell.append(icon);
     const labelCell = document.createElement('div');
     const p = document.createElement('p');
     const a = document.createElement('a');
