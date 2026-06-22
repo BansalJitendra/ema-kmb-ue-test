@@ -134,28 +134,26 @@ function buildLinkColumns(main) {
   parent.append(block);
 }
 
-/**
- * The debit-cards "Types of Debit cards" catalog migrated as a flat stack of
- * loose paragraphs/lists (per card: an image <p>, a title <p>, a bullets <ul>,
- * optional "(Discontinued…)" / "T&C apply" / "Compare" <p>s, and a "Know More"
- * <p>). Group each card into a row and wrap them all in a `card-catalog` block
- * so they render as a card grid like the live page. Also strips the leaked
- * compare-tray controls ("Compare", "Add account for comparison", "Close
- * Compare…") which are JS UI artifacts, not content.
- */
-function buildCardCatalog(main) {
-  const heading = [...main.querySelectorAll('h2')]
-    .find((h) => h.textContent.trim() === 'Types of Debit cards');
-  if (!heading) return;
+// Headings that introduce an image-card catalog migrated as flat content
+// (e.g. debit cards "Types of Debit cards", current accounts "Solutions built
+// around your business"). Each catalog is grouped into a `card-catalog` grid.
+const CARD_CATALOG_HEADINGS = [
+  'Types of Debit cards',
+  'Solutions built around your business',
+];
 
+/**
+ * Card catalogs migrated as a flat stack of loose paragraphs/lists (per card:
+ * one or two image <p>s, a title <p>, optional meta lines, a bullets <ul>, and
+ * Apply Now / Know More link <p>s). Group each card into a row and wrap them in
+ * a `card-catalog` block so they render as a grid like the live page. Strips the
+ * leaked compare-tray controls ("Compare", "Add account for comparison", "Close
+ * Compare…", and meta+Compare combined dupes) which are JS UI artifacts.
+ */
+function buildOneCardCatalog(heading) {
   const parent = heading.parentElement;
   const JUNK = /^(Compare|Add account for comparison|Close Compare.*|×)$/;
 
-  // Walk siblings after the heading, building cards. Each card starts at an
-  // image paragraph; EDS split the source's two card images (mobile + desktop)
-  // into two consecutive image <p>s, so a new card only begins on an image <p>
-  // that follows body content (title/bullets) — consecutive leading image <p>s
-  // belong to the same card (we keep the first, drop the rest).
   const cards = [];
   const consumed = [];
   let cur = null;
@@ -165,20 +163,20 @@ function buildCardCatalog(main) {
     const text = node.textContent.replace(/\s+/g, ' ').trim();
     const isImageP = node.tagName === 'P' && node.querySelector('picture, img') && !text;
 
-    // A standalone modal/disclaimer block signals the end of the catalog.
+    // The next section heading or a modal/disclaimer block ends the catalog.
+    if (node.tagName === 'H2' || node.tagName === 'H1') break;
     if (node.tagName === 'P' && /^Disclaimer$/.test(text)) break;
 
     if (isImageP) {
       if (!cur || cur.body.length > 0) {
-        // start a new card (first image is the card thumbnail)
         cur = { image: node, body: [] };
         cards.push(cur);
       }
-      // else: a second leading image for the current card — drop it
-      consumed.push(node);
+      consumed.push(node); // first image kept, extra leading images dropped
     } else if (cur) {
-      if (node.tagName === 'P' && JUNK.test(text)) {
-        consumed.push(node); // drop compare-tray junk
+      // Drop standalone compare junk and the "<meta> Compare" combined dupe.
+      if (node.tagName === 'P' && (JUNK.test(text) || /\bCompare$/.test(text))) {
+        consumed.push(node);
       } else if (text || node.querySelector('a, li')) {
         cur.body.push(node);
         consumed.push(node);
@@ -205,15 +203,13 @@ function buildCardCatalog(main) {
       const t = el.textContent.replace(/\s+/g, ' ').trim();
       const clone = el.cloneNode(true);
       if (el.tagName === 'P' && /Discontinued from New Issuance/i.test(t)) {
-        // the source repeats this note; keep a single clean copy (and drop any
-        // leaked "Compare" control merged into the same paragraph).
         if (noteAdded) return;
         noteAdded = true;
         clone.className = 'card-catalog-note';
         clone.textContent = '(Discontinued from New Issuance)';
         bodyCell.append(clone);
       } else if (el.tagName === 'P' && el.querySelector('a')) {
-        links.push(clone); // Know More / T&C apply
+        links.push(clone); // Know More / Apply Now / T&C apply
       } else {
         bodyCell.append(clone);
       }
@@ -229,11 +225,80 @@ function buildCardCatalog(main) {
     block.append(row);
   });
 
-  // Remove the flat nodes and insert the block where the catalog began.
-  const anchor = consumed[0];
   consumed.forEach((el) => el.remove());
-  if (anchor && anchor.parentNode === parent) parent.insertBefore(block, heading.nextSibling);
-  else parent.insertBefore(block, heading.nextSibling);
+  parent.insertBefore(block, heading.nextSibling);
+}
+
+function buildCardCatalog(main) {
+  [...main.querySelectorAll('h2')]
+    .filter((h) => CARD_CATALOG_HEADINGS.includes(h.textContent.trim()))
+    .forEach((h) => buildOneCardCatalog(h));
+}
+
+/**
+ * FAQ sections migrated as flat content: each question is an <h2> whose text is
+ * the (HTML-escaped) inert markup `<a href="javascript:;">Question</a>`,
+ * followed by one or more <p> answer paragraphs. Pair each question with its
+ * answer(s) into an `accordion` block (native <details>) so they expand/collapse
+ * like live.
+ */
+function cleanFaqQuestion(text) {
+  // strip a literal <a href="javascript:;">…</a> wrapper that survived as text
+  return text
+    .replace(/<a\s+href="javascript:;?"\s*>/i, '')
+    .replace(/<\/a>/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function buildFaqAccordion(main) {
+  const faqHeading = [...main.querySelectorAll('h2')]
+    .find((h) => h.textContent.trim() === 'Frequently Asked Questions');
+  if (!faqHeading) return;
+  const parent = faqHeading.parentElement;
+
+  // A question heading is an <h2> whose text is the escaped javascript-link
+  // markup (it renders as literal "<a href="javascript:;">Q</a>" text).
+  const isQuestion = (el) => el && el.tagName === 'H2'
+    && /<a\s+href="javascript:;?"/i.test(el.textContent);
+
+  const rows = [];
+  const consumed = [];
+  let node = faqHeading.nextElementSibling;
+  while (node) {
+    const next = node.nextElementSibling;
+    if (!isQuestion(node)) break; // end of the FAQ run
+    const q = cleanFaqQuestion(node.textContent);
+    consumed.push(node);
+    // collect following answer paragraphs until the next question / heading
+    const answer = [];
+    let a = next;
+    while (a && !isQuestion(a) && !/^H[1-3]$/.test(a.tagName)) {
+      const nx = a.nextElementSibling;
+      answer.push(a);
+      consumed.push(a);
+      a = nx;
+    }
+    rows.push({ q, answer });
+    node = a;
+  }
+
+  if (rows.length < 2) return;
+
+  const block = document.createElement('div');
+  block.className = 'accordion';
+  rows.forEach((row) => {
+    const item = document.createElement('div');
+    const label = document.createElement('div');
+    label.textContent = row.q;
+    const body = document.createElement('div');
+    row.answer.forEach((p) => body.append(p.cloneNode(true)));
+    item.append(label, body);
+    block.append(item);
+  });
+
+  consumed.forEach((el) => el.remove());
+  parent.insertBefore(block, faqHeading.nextSibling);
 }
 
 /**
@@ -244,6 +309,7 @@ function buildAutoBlocks(main) {
   try {
     buildLinkColumns(main);
     buildCardCatalog(main);
+    buildFaqAccordion(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
