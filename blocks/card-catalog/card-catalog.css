@@ -130,3 +130,30 @@
   line-height: 1.5;
   color: var(--text-color, #333);
 }
+
+/* Offers variant ("Saving Accounts offers you don't want to miss!"): a "Just
+   Added" badge, a title, description, "Valid Till" date and a Read More link. */
+.card-catalog.cards-offers .card-catalog-badge {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color, #555);
+}
+
+.card-catalog.cards-offers .card-catalog-card-body h4 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--brand-secondary, #003874);
+}
+
+.card-catalog.cards-offers .card-catalog-valid {
+  margin-top: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-color, #333);
+}
+
+.card-catalog.cards-offers .card-catalog-links {
+  margin-top: 12px;
+}

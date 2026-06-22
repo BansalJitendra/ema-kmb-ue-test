@@ -77,10 +77,18 @@ function bindEvents(block) {
    instead match known light-banner filenames and flag the slide so the CSS can
    use dark text. */
 const LIGHT_BANNER_RE = /(customer-service|reach-us|contact-us|help-center)/i;
+/* Dark banner artwork (e.g. the savings-account hero) needs white overlay text.
+   Migrated images are ingested as media_* hashes, so match the original name
+   preserved in the alt text as well as the src. */
+const DARK_BANNER_RE = /(811-zero-balance|salary-ko-jagao|open bank account online)/i;
 function applyContrastClass(slide) {
   const img = slide.querySelector('.carousel-banner-slide-image img');
-  if (img && LIGHT_BANNER_RE.test(img.getAttribute('src') || '')) {
+  if (!img) return;
+  const hint = `${img.getAttribute('src') || ''} ${img.getAttribute('alt') || ''}`;
+  if (LIGHT_BANNER_RE.test(hint)) {
     slide.classList.add('carousel-banner-slide-light');
+  } else if (DARK_BANNER_RE.test(hint)) {
+    slide.classList.add('carousel-banner-slide-dark');
   }
 }
 

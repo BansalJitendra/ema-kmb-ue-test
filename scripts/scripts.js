@@ -628,6 +628,107 @@ function buildRelatedProducts(main) {
 }
 
 /**
+ * "Saving Accounts offers you don't want to miss!" migrated as a flat run of
+ * <p>Just Added</p> badge + <h4>title + <p>desc + <p>Valid Till…</p> +
+ * <p><a>Read More</a></p> groups (no images — live loads them dynamically).
+ * Group each offer into a text card and wrap them in a `card-catalog` grid so
+ * they render like the live offer cards. Drops the leaked prev/next nav.
+ */
+function buildOffers(main) {
+  const heading = [...main.querySelectorAll('h2')]
+    .find((h) => /^Saving Accounts offers you/i.test(h.textContent.replace(/\s+/g, ' ').trim()));
+  if (!heading) return;
+  const parent = heading.parentElement;
+
+  const cards = [];
+  const consumed = [];
+  let cur = null;
+  let node = heading.nextElementSibling;
+  while (node && node.tagName !== 'H2') {
+    const next = node.nextElementSibling;
+    const text = node.textContent.replace(/\s+/g, ' ').trim();
+    const isNav = node.tagName === 'P' && /^(prev|next)$/i.test(text);
+    const isNavImg = node.tagName === 'P' && node.querySelector('img')
+      && /svg-icon\/(next|prev)/.test(node.querySelector('img').getAttribute('src') || '');
+    if (node.tagName === 'H4') {
+      cur = { title: node, badge: null, body: [] };
+      cards.push(cur);
+      consumed.push(node);
+    } else if (node.tagName === 'P' && /^Just Added$/i.test(text)) {
+      // badge precedes the next h4 — stash it on a pending holder
+      consumed.push(node);
+      cur = null; // ensure the badge isn't attached to the previous card's body
+      cards.push({
+        title: null, badge: text, body: [], pendingBadge: true,
+      });
+    } else if (isNav || isNavImg) {
+      consumed.push(node); // leaked carousel nav
+    } else if (cur && (text || node.querySelector('a'))) {
+      cur.body.push(node);
+      consumed.push(node);
+    } else {
+      consumed.push(node);
+    }
+    node = next;
+  }
+
+  // Merge pending badges into the following card (the h4 that comes after it).
+  const merged = [];
+  for (let i = 0; i < cards.length; i += 1) {
+    const c = cards[i];
+    if (c.pendingBadge) {
+      const nextCard = cards[i + 1];
+      if (nextCard && nextCard.title) {
+        nextCard.badge = c.badge;
+        merged.push(nextCard);
+        i += 1;
+      }
+    } else if (c.title) {
+      merged.push(c);
+    }
+  }
+  if (merged.length < 2) return;
+
+  const block = document.createElement('div');
+  block.className = 'card-catalog cards-text-only cards-offers';
+  merged.forEach((card) => {
+    const row = document.createElement('div');
+    const bodyCell = document.createElement('div');
+    if (card.badge) {
+      const badge = document.createElement('p');
+      badge.className = 'card-catalog-badge';
+      badge.textContent = card.badge;
+      bodyCell.append(badge);
+    }
+    bodyCell.append(card.title.cloneNode(true));
+    const links = [];
+    card.body.forEach((el) => {
+      const t = el.textContent.replace(/\s+/g, ' ').trim();
+      const clone = el.cloneNode(true);
+      if (el.tagName === 'P' && el.querySelector('a')) {
+        links.push(clone);
+      } else if (/^Valid Till/i.test(t)) {
+        clone.className = 'card-catalog-valid';
+        bodyCell.append(clone);
+      } else {
+        bodyCell.append(clone);
+      }
+    });
+    if (links.length) {
+      const linkRow = document.createElement('div');
+      linkRow.className = 'card-catalog-links';
+      links.forEach((l) => linkRow.append(l));
+      bodyCell.append(linkRow);
+    }
+    row.append(bodyCell);
+    block.append(row);
+  });
+
+  consumed.forEach((el) => el.remove());
+  parent.insertBefore(block, heading.nextSibling);
+}
+
+/**
  * The savings-account hero is a banner slider whose source HTML duplicated each
  * slide 6 times (slick carousel clones captured statically), so the migrated
  * content renders the two banner images stacked and repeated. Collapse it into a
@@ -841,6 +942,7 @@ function buildAutoBlocks(main) {
     buildIconGrids(main);
     buildFastTrackOfferings(main);
     buildRelatedProducts(main);
+    buildOffers(main);
     buildFaqAccordion(main);
     removeLeakedModal(main);
     fixTokenizedIcons(main);
