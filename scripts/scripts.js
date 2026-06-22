@@ -408,6 +408,9 @@ const ICON_FIX = {
   'sa-choice-option-icon': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/saving-account/sa-choice-option-icon.svg',
   'sa-needs-option-icon': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/saving-account/sa-needs-option-icon.svg',
   healthcare: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Healthcare.svg',
+  apply: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/apply.svg',
+  'icn-protect-ride': 'https://www.kotak.bank.in/content/dam/Kotak/Insurance/icn-protect-ride.svg',
+  'buy-a-car-for-whitebg': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/retail-journey/Buy-a-Car-for-whitebg.svg',
 };
 
 function iconImg(url) {
@@ -431,6 +434,13 @@ function fixTokenizedIcons(main) {
     img.alt = '';
     img.loading = 'lazy';
     if (!img.parentNode) span.appendChild(img);
+  });
+  // Broken <img src="/icons/NAME.svg"> (no span token) that resolve to missing
+  // local files — rewrite to the real Kotak SVG when the token is mapped.
+  main.querySelectorAll('img[src*="/icons/"]').forEach((img) => {
+    const m = (img.getAttribute('src') || '').match(/\/icons\/([^/.]+)\.svg/);
+    const url = m && ICON_FIX[m[1]];
+    if (url) img.src = url;
   });
 }
 
