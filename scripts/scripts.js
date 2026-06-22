@@ -223,6 +223,7 @@ function buildOneCardCatalog(heading) {
     card.body.forEach((el) => {
       const t = el.textContent.replace(/\s+/g, ' ').trim();
       const clone = el.cloneNode(true);
+      const isImageOnly = el.tagName === 'P' && el.querySelector('picture, img') && !t;
       if (el.tagName === 'P' && /Discontinued from New Issuance/i.test(t)) {
         if (noteAdded) return;
         noteAdded = true;
@@ -231,6 +232,17 @@ function buildOneCardCatalog(heading) {
         bodyCell.append(clone);
       } else if (el.tagName === 'P' && el.querySelector('a')) {
         links.push(clone); // Know More / Apply Now / T&C apply
+      } else if (isImageOnly) {
+        // Body image paragraphs (e.g. the 811 offer callout) stack a decorative
+        // background strip (empty alt) plus a meaningful badge. Live uses the
+        // strip as a CSS background, so keep only non-decorative (alt'd) images.
+        clone.querySelectorAll('picture, img').forEach((media) => {
+          const im = media.tagName === 'IMG' ? media : media.querySelector('img');
+          if (!im || !(im.getAttribute('alt') || '').trim()) {
+            (im && im.closest('picture') ? im.closest('picture') : media).remove();
+          }
+        });
+        if (clone.querySelector('img')) bodyCell.append(clone);
       } else {
         bodyCell.append(clone);
       }
