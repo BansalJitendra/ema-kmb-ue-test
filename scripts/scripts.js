@@ -627,12 +627,31 @@ function buildRelatedProducts(main) {
   parent.insertBefore(block, heading.nextSibling);
 }
 
+// Offer thumbnails for the "Saving Accounts offers you don't want to miss!"
+// cards. The migrated content has no images (live loads them from a deals API),
+// so map each offer title to its real Kotak thumbnail URL.
+const OFFER_IMAGES = {
+  Cleartax: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/others/clear-tax-t.jpg',
+  'Reliance Digital': 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/electronics/reliance-offer-thumbnail.jpg',
+  'Eco Mobility': 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/travel-offer/eco-mobility-t.jpg',
+  Amazon: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/amazon-offer-t.jpg',
+  Canon: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/electronics/canon-t.jpg',
+  Yatra: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/travel-offer/yatra-t.jpg',
+  'Paytm Flights': 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/travel-offer/paytm-flights-t.jpg',
+  Ixigo: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/travel-offer/Ixigo-t.jpg',
+  Ather: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/others/atheroffer-t.jpg',
+  Godrej: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/electronics/godrej-t.jpg',
+  'Hero Motorbikes': 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/others/memi-two-wheeler-t.jpg',
+  KTM: 'https://www.kotak.bank.in/content/dam/Kotak/deals-offers/others/ktmoffer-t.jpg',
+};
+
 /**
  * "Saving Accounts offers you don't want to miss!" migrated as a flat run of
  * <p>Just Added</p> badge + <h4>title + <p>desc + <p>Valid Till…</p> +
  * <p><a>Read More</a></p> groups (no images — live loads them dynamically).
- * Group each offer into a text card and wrap them in a `card-catalog` grid so
- * they render like the live offer cards. Drops the leaked prev/next nav.
+ * Group each offer into a card (thumbnail + badge + title + desc + Valid Till +
+ * Read More) and wrap them in a `card-catalog` grid like the live offer cards.
+ * Drops the leaked prev/next nav.
  */
 function buildOffers(main) {
   const heading = [...main.querySelectorAll('h2')]
@@ -690,9 +709,22 @@ function buildOffers(main) {
   if (merged.length < 2) return;
 
   const block = document.createElement('div');
-  block.className = 'card-catalog cards-text-only cards-offers';
+  block.className = 'card-catalog cards-offers';
   merged.forEach((card) => {
     const row = document.createElement('div');
+    const titleText = card.title.textContent.replace(/\s+/g, ' ').trim();
+    const imgUrl = OFFER_IMAGES[titleText];
+    if (imgUrl) {
+      const imgCell = document.createElement('div');
+      const p = document.createElement('p');
+      const img = document.createElement('img');
+      img.src = imgUrl;
+      img.alt = titleText;
+      img.loading = 'lazy';
+      p.append(img);
+      imgCell.append(p);
+      row.append(imgCell);
+    }
     const bodyCell = document.createElement('div');
     if (card.badge) {
       const badge = document.createElement('p');
