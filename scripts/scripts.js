@@ -556,13 +556,15 @@ function buildRelatedProducts(main) {
  * src so the 6 repeats become the 2 real slides.
  */
 function buildSavingsHero(main) {
-  // Anchor: the savings hero banner image alt/src lives in herosliderbanner.
-  const wrap = main.querySelector('.default-content-wrapper');
-  if (!wrap) return;
-  const firstBanner = [...wrap.children]
-    .find((el) => el.tagName === 'P' && el.querySelector('picture, img')
-      && /herosliderbanner|media_/.test(el.querySelector('img')?.getAttribute('src') || ''));
+  // Runs before decorateSections, so `.default-content-wrapper` doesn't exist
+  // yet — locate the hero by its banner image (herosliderbanner / ingested
+  // media_) and use that image paragraph's parent (the section div) as the wrap.
+  const isBanner = (el) => el && el.tagName === 'P' && el.querySelector('img')
+    && /herosliderbanner|media_/.test(el.querySelector('img').getAttribute('src') || '');
+  const firstBanner = [...main.querySelectorAll('p')].find(isBanner);
   if (!firstBanner) return;
+  const wrap = firstBanner.parentElement;
+  if (!wrap) return;
   // The hero ends at the first <h1> (the "Open Savings Account Online" intro).
   const endEl = wrap.querySelector('h1');
 
