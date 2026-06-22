@@ -169,8 +169,14 @@ function buildOneCardCatalog(heading) {
     const text = node.textContent.replace(/\s+/g, ' ').trim();
     const isImageP = node.tagName === 'P' && node.querySelector('picture, img') && !text;
     // A new card begins at an image only once the current card already has a CTA
-    // link; otherwise a mid-card image (e.g. the 811 offer badge) stays as body.
+    // link; otherwise the image belongs to the current card.
     const curHasCta = cur && cur.body.some((b) => b.querySelector && b.querySelector('a[href]'));
+    // Has the current card accumulated any text yet? Each source card leads with
+    // two stacked images (thumbnail + an alternate wide banner that the live site
+    // hides); both arrive before any text. Keep the first as the card image and
+    // drop the alternate banner. Only images that appear AFTER text (e.g. the 811
+    // offer badge) are real body images.
+    const curHasText = cur && cur.body.some((b) => b.textContent.replace(/\s+/g, ' ').trim());
 
     // The next section heading or a modal/disclaimer block ends the catalog.
     if (node.tagName === 'H2' || node.tagName === 'H1') break;
@@ -183,9 +189,10 @@ function buildOneCardCatalog(heading) {
       if (!cur || curHasCta) {
         cur = { image: node, body: [] };
         cards.push(cur);
-      } else {
-        cur.body.push(node); // mid-card image (offer badge) — keep in body
+      } else if (curHasText) {
+        cur.body.push(node); // mid-card image (e.g. offer badge) — keep in body
       }
+      // else: leading alternate banner image — drop it (consumed only)
       consumed.push(node);
     } else if (cur) {
       // Drop standalone compare junk and the "<meta> Compare" combined dupe.
