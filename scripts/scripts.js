@@ -574,33 +574,25 @@ function buildEmiCalculator(main) {
   const parent = marker.parentElement;
 
   // Walk from the marker to the result's last value ("Total Amount Payable").
-  // Collect text content for config extraction and mark nodes for removal.
+  // Collect text content for config extraction and mark nodes for removal. The
+  // amount tick paragraph is a run of "<n>L" tokens (e.g. "1L26L51L76L100L");
+  // the rate tick is a bare run of numbers (e.g. "89101112…24"). The decorative
+  // handle.png images may be stripped by image processing, so match by text.
   const consumed = [marker];
   let amountText = '';
   let rateText = '';
-  let tenureText = '';
   let applyHref = '';
   let node = marker.nextElementSibling;
-  let stage = 0; // 0 amount, 1 rate, 2 tenure
   let reachedResult = false;
   while (node) {
     const t = node.textContent.replace(/\s+/g, ' ').trim();
     const next = node.nextElementSibling;
     if (node.tagName === 'H2' || node.tagName === 'H1' || node.tagName === 'H4') break;
     consumed.push(node);
-    // Slider-tick paragraphs (image handle + run of numbers).
-    const isTick = node.tagName === 'P' && node.querySelector('img')
-      && /handle\.png/.test(node.querySelector('img').getAttribute('src') || '');
-    if (isTick) {
-      if (stage === 0) {
-        amountText = t;
-        stage = 1;
-      } else if (stage === 1) {
-        rateText = t;
-        stage = 2;
-      } else if (!tenureText) {
-        tenureText = t;
-      }
+    if (!amountText && /^(\d+L){2,}$/.test(t)) {
+      amountText = t;
+    } else if (amountText && !rateText && /^\d{6,}$/.test(t)) {
+      rateText = t;
     }
     const a = node.querySelector && node.querySelector('a[href]');
     if (a && /Apply Now/i.test(a.textContent)) applyHref = a.getAttribute('href') || '';
@@ -609,7 +601,7 @@ function buildEmiCalculator(main) {
     if (reachedResult && a && /Apply Now/i.test(a.textContent)) break;
     node = next;
   }
-  if (!amountText || !rateText) return;
+  if (!amountText) return;
 
   // Parse slider scales. Amount ticks like "1L26L51L76L100L" → 1L..100L.
   const lakhs = amountText.match(/(\d+)L/g) || [];
