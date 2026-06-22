@@ -82,3 +82,11 @@
   color: var(--brand-primary, #ed4223);
   text-decoration: underline;
 }
+
+.icon-grid .icon-grid-desc {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text-color, #555);
+}

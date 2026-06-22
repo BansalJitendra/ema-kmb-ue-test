@@ -363,23 +363,26 @@ function buildOneIconGrid(heading) {
     if (node.tagName === 'P' && node.querySelector('a[href]')) {
       consumed.push(node);
       const a = node.querySelector('a[href]');
+      const href = a.getAttribute('href');
       const label = a.textContent.replace(/\s+/g, ' ').trim();
       const icon = resolveGridIcon(node);
-      // A long link reads as a description sentence (e.g. "Link your Kotak
-      // Current Account with top ERP & Accounting tools."), not a tile label —
-      // it marks the end of the icon-tile run.
-      if (label && label.split(' ').length > 6) break;
-      if (label) {
+      const prev = items.length ? items[items.length - 1] : null;
+      const isLong = label && label.split(' ').length > 6;
+      if (isLong && prev && prev.href === href && prev.label) {
+        // a long link with the same href as the current tile is its description
+        prev.desc = label;
+      } else if (isLong) {
+        // a stray long sentence not tied to a tile — drop it (consumed)
+      } else if (label) {
         // a label paragraph — pair with the preceding icon-only paragraph
-        const prev = items.length ? items[items.length - 1] : null;
-        if (prev && !prev.label && prev.href === a.getAttribute('href')) {
+        if (prev && !prev.label && prev.href === href) {
           prev.label = label;
         } else {
-          items.push({ href: a.getAttribute('href'), label, icon });
+          items.push({ href, label, icon });
         }
       } else {
         // an icon-only paragraph — start a new item
-        items.push({ href: a.getAttribute('href'), label: '', icon });
+        items.push({ href, label: '', icon });
       }
     } else if (node.tagName === 'P' && !node.textContent.trim()) {
       consumed.push(node); // stray empty paragraph
@@ -405,6 +408,12 @@ function buildOneIconGrid(heading) {
     a.textContent = it.label;
     p.append(a);
     labelCell.append(p);
+    if (it.desc) {
+      const d = document.createElement('p');
+      d.className = 'icon-grid-desc';
+      d.textContent = it.desc;
+      labelCell.append(d);
+    }
     row.append(iconCell, labelCell);
     block.append(row);
   });
