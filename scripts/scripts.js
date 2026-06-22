@@ -634,9 +634,14 @@ function buildEmiCalculator(main) {
   block.dataset.tenureUnit = 'Years';
   if (applyHref) block.dataset.applyHref = applyHref;
 
+  // Capture a stable insertion anchor (the first node after the consumed run
+  // that is NOT itself being removed) before detaching anything, so insertBefore
+  // never references a removed node.
+  const consumedSet = new Set(consumed);
+  let anchor = node;
+  while (anchor && consumedSet.has(anchor)) anchor = anchor.nextElementSibling;
   consumed.forEach((el) => el.remove());
-  // Insert where the marker was (use the node that followed the result, or end).
-  parent.insertBefore(block, node || null);
+  parent.insertBefore(block, anchor && anchor.parentElement === parent ? anchor : null);
 }
 
 // Resolve a tokenized icon (<span class="icon icon-NAME">) or a broken
