@@ -291,15 +291,28 @@ function cleanFaqQuestion(text) {
 }
 
 function buildFaqAccordion(main) {
-  const faqHeading = [...main.querySelectorAll('h2')]
+  const faqHeading = [...main.querySelectorAll('h2, h4')]
     .find((h) => h.textContent.trim() === 'Frequently Asked Questions');
   if (!faqHeading) return;
   const parent = faqHeading.parentElement;
 
-  // A question heading is an <h2> whose text is the escaped javascript-link
-  // markup (it renders as literal "<a href="javascript:;">Q</a>" text).
-  const isQuestion = (el) => el && el.tagName === 'H2'
+  // Two migrated shapes:
+  //  (a) savings/cards: question is an <h2> whose text is the escaped
+  //      javascript-link markup (renders as literal "<a href="javascript:;">Q</a>").
+  //  (b) car-loan calculator: question is a plain <h3>, answers are <p>s, each
+  //      followed by a "Was this information helpful? Yes No" junk <p> and an
+  //      empty javascript-link <p> to drop.
+  const isLinkQuestion = (el) => el && el.tagName === 'H2'
     && /<a\s+href="javascript:;?"/i.test(el.textContent);
+  const isPlainQuestion = (el) => el && el.tagName === 'H3' && el.textContent.trim();
+  const isQuestion = (el) => isLinkQuestion(el) || isPlainQuestion(el);
+  const isAnswerJunk = (el) => el && el.tagName === 'P'
+    && (/^Was this information helpful/i.test(el.textContent.trim())
+      || !el.textContent.trim());
+  // A trailing "View All" link paragraph ends the FAQ run but is left in place
+  // (it links to the full FAQ page, shown below the accordion on live).
+  const isViewAll = (el) => el && el.tagName === 'P'
+    && /^View All$/i.test(el.textContent.replace(/\s+/g, ' ').trim());
 
   const rows = [];
   const consumed = [];
@@ -307,14 +320,17 @@ function buildFaqAccordion(main) {
   while (node) {
     const next = node.nextElementSibling;
     if (!isQuestion(node)) break; // end of the FAQ run
-    const q = cleanFaqQuestion(node.textContent);
+    const q = isLinkQuestion(node)
+      ? cleanFaqQuestion(node.textContent)
+      : node.textContent.replace(/\s+/g, ' ').trim();
     consumed.push(node);
-    // collect following answer paragraphs until the next question / heading
+    // collect following answer paragraphs until the next question / heading,
+    // dropping the "helpful?/Yes No" feedback junk.
     const answer = [];
     let a = next;
-    while (a && !isQuestion(a) && !/^H[1-3]$/.test(a.tagName)) {
+    while (a && !isQuestion(a) && !isViewAll(a) && !/^H[1-4]$/.test(a.tagName)) {
       const nx = a.nextElementSibling;
-      answer.push(a);
+      if (!isAnswerJunk(a)) answer.push(a);
       consumed.push(a);
       a = nx;
     }
