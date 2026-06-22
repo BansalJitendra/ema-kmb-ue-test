@@ -732,9 +732,10 @@ function buildOffers(main) {
  * The savings-account hero is a banner slider whose source HTML duplicated each
  * slide 6 times (slick carousel clones captured statically), so the migrated
  * content renders the two banner images stacked and repeated. Collapse it into a
- * clean `carousel-banner` block: one slide per unique banner image, pairing the
- * image with the heading/body/CTAs that follow it. Slides are deduped by image
- * src so the 6 repeats become the 2 real slides.
+ * clean `carousel-banner` block: one slide per unique banner image. In the
+ * source each slide's caption text PRECEDES its banner image, so the text
+ * buffered before an image belongs to that image's slide. Slides are deduped by
+ * image src so the 6 repeats become the 2 real slides.
  */
 function buildSavingsHero(main) {
   // Runs before decorateSections, so `.default-content-wrapper` doesn't exist
@@ -749,12 +750,14 @@ function buildSavingsHero(main) {
   // The hero ends at the first <h1> (the "Open Savings Account Online" intro).
   const endEl = wrap.querySelector('h1');
 
-  // Walk the hero region, splitting into slides at each banner image <p>.
+  // Walk the hero region. Buffer caption text/CTAs; when a unique banner image
+  // is reached, that buffer becomes the slide body. Duplicate images (slick
+  // clones) and their preceding buffers are dropped.
   const slides = [];
   const consumed = [];
   const seenImg = new Set();
-  let cur = null;
-  let node = firstBanner;
+  let buffer = [];
+  let node = wrap.firstElementChild;
   while (node && node !== endEl) {
     const next = node.nextElementSibling;
     const img = node.querySelector && node.querySelector('img');
@@ -768,19 +771,17 @@ function buildSavingsHero(main) {
     if (isBannerImg) {
       const src = img.getAttribute('src');
       if (seenImg.has(src)) {
-        cur = null; // duplicate slide — swallow until the next unique image
-        consumed.push(node);
+        buffer.forEach((b) => consumed.push(b)); // duplicate slide clone — drop
       } else {
         seenImg.add(src);
-        cur = { image: node, body: [] };
-        slides.push(cur);
-        consumed.push(node);
+        slides.push({ image: node, body: buffer });
       }
-    } else if (isNavJunk || !cur) {
       consumed.push(node);
-    } else if (text || node.querySelector('a[href]')) {
-      cur.body.push(node);
+      buffer = [];
+    } else if (isNavJunk) {
       consumed.push(node);
+    } else if (text || node.querySelector('a[href]:not([href=""])')) {
+      buffer.push(node); // caption text/CTA for the upcoming image
     } else {
       consumed.push(node);
     }
@@ -798,9 +799,9 @@ function buildSavingsHero(main) {
     const contentCell = document.createElement('div');
     slide.body.forEach((el) => {
       const t = el.textContent.replace(/\s+/g, ' ').trim();
-      // drop empty/anchor-less junk paragraphs
       if (!t && !el.querySelector('a[href]:not([href=""]), img')) return;
       contentCell.append(el.cloneNode(true));
+      consumed.push(el);
     });
     row.append(imgCell, contentCell);
     block.append(row);
