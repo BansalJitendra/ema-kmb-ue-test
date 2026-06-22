@@ -78,7 +78,8 @@ function autolinkModals(doc) {
  * they render as three side-by-side cards like the live page.
  */
 function buildLinkColumns(main) {
-  const HEADERS = ['Credit Card Services', 'Credit Cards Guide', "What's New?", 'What’s New?'];
+  const HEADERS = ['Credit Card Services', 'Credit Cards Guide', "What's New?", 'What’s New?',
+    'Service Request', 'HelpCenter', 'Help Center', 'Learn all about Savings Account'];
   const isHeader = (el) => el && el.tagName === 'P'
     && HEADERS.includes(el.textContent.trim());
 
@@ -121,17 +122,22 @@ function buildLinkColumns(main) {
     block.append(row);
   });
 
+  // Anchor the block at the first group's position (not the end of the wrapper,
+  // which on pages like savings-account holds much more content after it).
+  const anchor = starts[0];
+
   // Remove the original flat nodes (header, ul, optional view-all p) for each group.
   starts.forEach((header) => {
     const ul = header.nextElementSibling;
     const after = ul.nextElementSibling;
     if (after && after.tagName === 'P' && after.querySelector('a')) after.remove();
     ul.remove();
-    header.remove();
+    if (header !== anchor) header.remove();
   });
 
-  // Insert the block where the first group was.
-  parent.append(block);
+  // Insert the block where the first group was, then drop the anchor header.
+  parent.insertBefore(block, anchor);
+  anchor.remove();
 }
 
 // Headings that introduce an image-card catalog migrated as flat content
