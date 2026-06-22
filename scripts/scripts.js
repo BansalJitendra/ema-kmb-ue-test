@@ -376,6 +376,50 @@ function fixTokenizedIcons(main) {
   });
 }
 
+// The savings-account "Benefits of Kotak Savings Account" carousel imported with
+// its icons but lost the heading and per-slide caption text. Restore them: match
+// each slide by its icon filename and fill the empty content cell, then prepend
+// the section heading the source dropped.
+const BENEFITS_CAPTIONS = {
+  'sa-interest-icon': 'Earn FD-like interest in your Savings Account!',
+  offer: 'Everyday offers on shopping, dining, travel and more',
+  'sa-choice-option-icon': 'Range of Savings Account designed to fit your specific requirements',
+  'sa-needs-option-icon': '24x7 convenience banking: Your bank, your time',
+  healthcare: 'Health insurance benefits',
+};
+function restoreBenefitsCarousel(main) {
+  const promo = main.querySelector('.carousel-promo');
+  if (!promo) return;
+  const rows = [...promo.querySelectorAll(':scope > div')];
+  if (rows.length < 2) return;
+  let filled = 0;
+  rows.forEach((row) => {
+    const cells = [...row.children];
+    if (cells.length < 2) return;
+    const img = cells[0].querySelector('img');
+    const src = (img && img.getAttribute('src')) || '';
+    const key = Object.keys(BENEFITS_CAPTIONS)
+      .find((k) => new RegExp(k.replace(/-/g, '[-_]?'), 'i').test(src));
+    const contentCell = cells[1];
+    if (key && !contentCell.textContent.trim()) {
+      const p = document.createElement('p');
+      p.textContent = BENEFITS_CAPTIONS[key];
+      contentCell.append(p);
+      filled += 1;
+    }
+  });
+  if (!filled) return;
+  // Prepend the dropped section heading directly above the carousel block (runs
+  // before decorateBlocks, so the block is still `.carousel-promo` in its parent).
+  const prev = promo.previousElementSibling;
+  if (!prev || !/Benefits of Kotak Savings Account/i.test(prev.textContent)) {
+    const h2 = document.createElement('h2');
+    h2.id = 'benefits-of-kotak-savings-account';
+    h2.textContent = 'Benefits of Kotak Savings Account';
+    promo.parentElement.insertBefore(h2, promo);
+  }
+}
+
 // Resolve a tokenized icon (<span class="icon icon-NAME">) or a broken
 // /icons/NAME.svg <img> inside `el` to a real Kotak SVG <img>. Returns the img
 // or null.
@@ -764,6 +808,7 @@ function buildAutoBlocks(main) {
     buildFaqAccordion(main);
     removeLeakedModal(main);
     fixTokenizedIcons(main);
+    restoreBenefitsCarousel(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
