@@ -548,6 +548,86 @@ function buildRelatedProducts(main) {
 }
 
 /**
+ * The savings-account hero is a banner slider whose source HTML duplicated each
+ * slide 6 times (slick carousel clones captured statically), so the migrated
+ * content renders the two banner images stacked and repeated. Collapse it into a
+ * clean `carousel-banner` block: one slide per unique banner image, pairing the
+ * image with the heading/body/CTAs that follow it. Slides are deduped by image
+ * src so the 6 repeats become the 2 real slides.
+ */
+function buildSavingsHero(main) {
+  // Anchor: the savings hero banner image alt/src lives in herosliderbanner.
+  const wrap = main.querySelector('.default-content-wrapper');
+  if (!wrap) return;
+  const firstBanner = [...wrap.children]
+    .find((el) => el.tagName === 'P' && el.querySelector('picture, img')
+      && /herosliderbanner|media_/.test(el.querySelector('img')?.getAttribute('src') || ''));
+  if (!firstBanner) return;
+  // The hero ends at the first <h1> (the "Open Savings Account Online" intro).
+  const endEl = wrap.querySelector('h1');
+
+  // Walk the hero region, splitting into slides at each banner image <p>.
+  const slides = [];
+  const consumed = [];
+  const seenImg = new Set();
+  let cur = null;
+  let node = firstBanner;
+  while (node && node !== endEl) {
+    const next = node.nextElementSibling;
+    const img = node.querySelector && node.querySelector('img');
+    const text = node.textContent.replace(/\s+/g, ' ').trim();
+    const isBannerImg = node.tagName === 'P' && img
+      && /herosliderbanner|media_/.test(img.getAttribute('src') || '');
+    const isNavJunk = node.tagName === 'P'
+      && (/^(prev|next|×)$/i.test(text) || (img && /svg-icon\/(next|prev)/.test(img.getAttribute('src') || '')))
+      && !node.querySelector('a[href]:not([href=""])');
+
+    if (isBannerImg) {
+      const src = img.getAttribute('src');
+      if (seenImg.has(src)) {
+        cur = null; // duplicate slide — swallow until the next unique image
+        consumed.push(node);
+      } else {
+        seenImg.add(src);
+        cur = { image: node, body: [] };
+        slides.push(cur);
+        consumed.push(node);
+      }
+    } else if (isNavJunk || !cur) {
+      consumed.push(node);
+    } else if (text || node.querySelector('a[href]')) {
+      cur.body.push(node);
+      consumed.push(node);
+    } else {
+      consumed.push(node);
+    }
+    node = next;
+  }
+
+  if (slides.length < 1) return;
+
+  const block = document.createElement('div');
+  block.className = 'carousel-banner';
+  slides.forEach((slide) => {
+    const row = document.createElement('div');
+    const imgCell = document.createElement('div');
+    imgCell.append(slide.image.querySelector('picture, img').cloneNode(true));
+    const contentCell = document.createElement('div');
+    slide.body.forEach((el) => {
+      const t = el.textContent.replace(/\s+/g, ' ').trim();
+      // drop empty/anchor-less junk paragraphs
+      if (!t && !el.querySelector('a[href]:not([href=""]), img')) return;
+      contentCell.append(el.cloneNode(true));
+    });
+    row.append(imgCell, contentCell);
+    block.append(row);
+  });
+
+  consumed.forEach((el) => el.remove());
+  wrap.insertBefore(block, endEl || wrap.firstChild);
+}
+
+/**
  * The current-accounts "One Current Account, many robust offerings" section
  * migrated as an intro <p> then pairs of <p>icon</p> + <p><strong>Label</strong>
  * <br>desc</p> (Loans, POS/QR/UPI, Payment & Collection, Trade Forex), plus
@@ -672,6 +752,7 @@ function removeLeakedModal(main) {
  */
 function buildAutoBlocks(main) {
   try {
+    buildSavingsHero(main);
     buildLinkColumns(main);
     buildCardCatalog(main);
     buildFeatureRow(main);
