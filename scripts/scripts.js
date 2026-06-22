@@ -873,6 +873,12 @@ function buildOffers(main) {
  * image src so the 6 repeats become the 2 real slides.
  */
 function buildSavingsHero(main) {
+  // Savings-account hero only: the source duplicated each slide 6x and this
+  // builder collapses them. Other pages (e.g. the car-loan EMI calculator) also
+  // carry a herosliderbanner image but a different layout, so scope strictly to
+  // the savings-account page to avoid clobbering/crashing those pages.
+  if (!/\/savings-account(\/|$)/.test(window.location.pathname)) return;
+
   // Runs before decorateSections, so `.default-content-wrapper` doesn't exist
   // yet — locate the hero by its banner image (herosliderbanner / ingested
   // media_) and use that image paragraph's parent (the section div) as the wrap.
@@ -883,7 +889,10 @@ function buildSavingsHero(main) {
   const wrap = firstBanner.parentElement;
   if (!wrap) return;
   // The hero ends at the first <h1> (the "Open Savings Account Online" intro).
-  const endEl = wrap.querySelector('h1');
+  // Only use it as an insert anchor if it's a direct child of wrap; otherwise
+  // insertBefore would throw NotFoundError.
+  const h1 = wrap.querySelector('h1');
+  const endEl = h1 && h1.parentElement === wrap ? h1 : null;
 
   // Walk the hero region. Buffer caption text/CTAs; when a unique banner image
   // is reached, that buffer becomes the slide body. Duplicate images (slick
