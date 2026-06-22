@@ -619,6 +619,27 @@ function buildFastTrackOfferings(main) {
 }
 
 /**
+ * The current-accounts "Choose your establishment type to continue" block is a
+ * JS form-modal that's hidden on the live site, but it leaked into the migrated
+ * page's visible flow — with broken tokenized icons and a duplicated
+ * Locate/Call/Write contact strip. Remove that heading and all following
+ * siblings (the modal + duplicate contact blocks) so the page ends cleanly.
+ */
+function removeLeakedModal(main) {
+  const heading = [...main.querySelectorAll('h2')]
+    .find((h) => /^Choose your establishment type/i.test(h.textContent.trim()));
+  if (!heading) return;
+  // The heading and its leaked modal/contact siblings share a wrapper that also
+  // holds preceding real content, so only remove the heading itself and the
+  // sibling nodes that follow it within that wrapper (the modal + duplicated
+  // Locate/Call/Write contact rows). Never remove the wrapper or earlier nodes.
+  const toRemove = [];
+  let node = heading;
+  while (node) { toRemove.push(node); node = node.nextElementSibling; }
+  toRemove.forEach((el) => el.remove());
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -631,6 +652,7 @@ function buildAutoBlocks(main) {
     buildFastTrackOfferings(main);
     buildRelatedProducts(main);
     buildFaqAccordion(main);
+    removeLeakedModal(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
