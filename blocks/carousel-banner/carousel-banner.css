@@ -66,6 +66,13 @@
   object-fit: contain;
 }
 
+/* These banners carry their full messaging and CTA baked into the artwork, so
+   the migrated text/CTA overlay is redundant and collides with the image copy.
+   Hide it — the image alone matches the live slide. */
+.carousel-banner .carousel-banner-slide-dark .carousel-banner-slide-content {
+  display: none;
+}
+
 .carousel-banner .carousel-banner-slide:has(.carousel-banner-slide-content[data-align='center']) {
   align-items: center;
 }
