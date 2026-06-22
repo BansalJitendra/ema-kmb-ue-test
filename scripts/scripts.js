@@ -200,12 +200,15 @@ function buildCardCatalog(main) {
 
     const bodyCell = document.createElement('div');
     const links = [];
+    let noteAdded = false;
     card.body.forEach((el) => {
       const t = el.textContent.replace(/\s+/g, ' ').trim();
       const clone = el.cloneNode(true);
       if (el.tagName === 'P' && /Discontinued from New Issuance/i.test(t)) {
-        // some cards merge the note with a leaked "Compare" control — keep only
-        // the discontinued note text.
+        // the source repeats this note; keep a single clean copy (and drop any
+        // leaked "Compare" control merged into the same paragraph).
+        if (noteAdded) return;
+        noteAdded = true;
         clone.className = 'card-catalog-note';
         clone.textContent = '(Discontinued from New Issuance)';
         bodyCell.append(clone);
