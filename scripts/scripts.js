@@ -341,12 +341,39 @@ const GRID_ICONS_BY_LABEL = {
   'Exclusive Offers for your business': 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/Offers-Beyond-Banking.jpg',
 };
 
+// Tokenized icons (span.icon icon-NAME) outside the grid builders that EDS
+// resolves to missing local /icons/*.svg. Maps each token to its real Kotak SVG
+// (e.g. savings-account "Why choose" feature tiles and offer glyphs).
+const ICON_FIX = {
+  'sa-interest-icon': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/saving-account/sa-interest-icon.svg',
+  account: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/account.svg',
+  'zero-balance-account': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Zero_Balance_Account.svg',
+  lifestyle: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/lifestyle.svg',
+  offer: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/loans/personal-loan/Offer.svg',
+};
+
 function iconImg(url) {
   const img = document.createElement('img');
   img.src = url;
   img.alt = '';
   img.loading = 'lazy';
   return img;
+}
+
+// Rewrite tokenized icons whose token is in ICON_FIX so they point at the real
+// Kotak SVG instead of the 404ing local /icons/NAME.svg.
+function fixTokenizedIcons(main) {
+  main.querySelectorAll('span.icon').forEach((span) => {
+    const cls = [...span.classList].find((c) => c.startsWith('icon-'));
+    const token = cls ? cls.slice(5) : null;
+    const url = token && ICON_FIX[token];
+    if (!url) return;
+    const img = span.querySelector('img') || document.createElement('img');
+    img.src = url;
+    img.alt = '';
+    img.loading = 'lazy';
+    if (!img.parentNode) span.appendChild(img);
+  });
 }
 
 // Resolve a tokenized icon (<span class="icon icon-NAME">) or a broken
@@ -653,6 +680,7 @@ function buildAutoBlocks(main) {
     buildRelatedProducts(main);
     buildFaqAccordion(main);
     removeLeakedModal(main);
+    fixTokenizedIcons(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
