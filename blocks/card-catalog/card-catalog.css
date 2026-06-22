@@ -114,3 +114,19 @@
 .card-catalog .card-catalog-card-body a:hover {
   text-decoration: underline;
 }
+
+/* Text-only variant (Related Products): no image, a heading + description +
+   "Know more" link. */
+.card-catalog.cards-text-only .card-catalog-card-body h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--brand-secondary, #003874);
+}
+
+.card-catalog.cards-text-only .card-catalog-card-body p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-color, #333);
+}

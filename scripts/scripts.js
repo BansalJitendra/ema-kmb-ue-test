@@ -301,6 +301,280 @@ function buildFaqAccordion(main) {
   parent.insertBefore(block, faqHeading.nextSibling);
 }
 
+// Icon tokens (span.icon icon-NAME) used by the current-accounts grids, mapped
+// to their original Kotak SVG URLs (EDS resolves the tokens to missing local
+// /icons/*.svg). `icon-icon` is the generic account-variant glyph.
+const GRID_ICONS = {
+  'business-loan': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Business-Loan.svg',
+  'payment-and-collection-solutions': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Payment-and-Collection-Solutions.svg',
+  'trade-forex-solutions-04': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Trade-Forex-Solutions-04.svg',
+  'pos-new': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/pos-new.svg',
+  'activmoney-05': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/ActivMoney-05.svg',
+  'biz-credit-card': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Biz-Credit-card.svg',
+  'debit-card': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Debit-Card.svg',
+  calculator: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/calculator.svg',
+  'career-develop': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/careers/career-develop.svg',
+  icon: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Icon.svg',
+};
+
+// Resolve a tokenized icon (<span class="icon icon-NAME">) or a broken
+// /icons/NAME.svg <img> inside `el` to a real Kotak SVG <img>. Returns the img
+// or null.
+function resolveGridIcon(el) {
+  if (!el) return null;
+  let token = null;
+  const span = el.querySelector('span.icon');
+  const img = el.querySelector('img');
+  if (span) {
+    const cls = [...span.classList].find((c) => c.startsWith('icon-'));
+    token = cls ? cls.slice(5) : null;
+  } else if (img) {
+    const m = (img.getAttribute('src') || '').match(/\/icons\/([^/.]+)\.svg/);
+    token = m ? m[1] : null;
+  }
+  const url = token && GRID_ICONS[token];
+  if (!url) return null;
+  const out = document.createElement('img');
+  out.src = url;
+  out.alt = '';
+  out.loading = 'lazy';
+  return out;
+}
+
+// Headings whose following content is a flat run of icon-link pairs
+// (<p><a>(icon)</a></p> + <p><a>label</a></p>) — rendered as an icon-tile grid.
+const ICON_GRID_HEADINGS = [
+  'Current Accounts for every business need',
+  'Additional Current Account variants unavailable for new Current Account opening',
+  'Solutions for your Business',
+  'Unlock exciting deals & discounts with your Kotak Current Account',
+];
+
+function buildOneIconGrid(heading) {
+  const parent = heading.parentElement;
+  // Collect the run of <p> siblings (each holding a single <a>) until the next
+  // heading. Items come in pairs: an icon link <p> then a label link <p> with
+  // the same href; some sections omit the icon <p>.
+  const items = [];
+  const consumed = [];
+  let node = heading.nextElementSibling;
+  while (node && !/^H[1-4]$/.test(node.tagName)) {
+    const next = node.nextElementSibling;
+    if (node.tagName === 'P' && node.querySelector('a[href]')) {
+      consumed.push(node);
+      const a = node.querySelector('a[href]');
+      const label = a.textContent.replace(/\s+/g, ' ').trim();
+      const icon = resolveGridIcon(node);
+      // A long link reads as a description sentence (e.g. "Link your Kotak
+      // Current Account with top ERP & Accounting tools."), not a tile label —
+      // it marks the end of the icon-tile run.
+      if (label && label.split(' ').length > 6) break;
+      if (label) {
+        // a label paragraph — pair with the preceding icon-only paragraph
+        const prev = items.length ? items[items.length - 1] : null;
+        if (prev && !prev.label && prev.href === a.getAttribute('href')) {
+          prev.label = label;
+        } else {
+          items.push({ href: a.getAttribute('href'), label, icon });
+        }
+      } else {
+        // an icon-only paragraph — start a new item
+        items.push({ href: a.getAttribute('href'), label: '', icon });
+      }
+    } else if (node.tagName === 'P' && !node.textContent.trim()) {
+      consumed.push(node); // stray empty paragraph
+    } else {
+      break; // non-link content ends the grid
+    }
+    node = next;
+  }
+
+  const tiles = items.filter((it) => it.label);
+  if (tiles.length < 3) return;
+
+  const block = document.createElement('div');
+  block.className = 'icon-grid';
+  tiles.forEach((it) => {
+    const row = document.createElement('div');
+    const iconCell = document.createElement('div');
+    if (it.icon) iconCell.append(it.icon);
+    const labelCell = document.createElement('div');
+    const p = document.createElement('p');
+    const a = document.createElement('a');
+    a.setAttribute('href', it.href);
+    a.textContent = it.label;
+    p.append(a);
+    labelCell.append(p);
+    row.append(iconCell, labelCell);
+    block.append(row);
+  });
+
+  consumed.forEach((el) => el.remove());
+  parent.insertBefore(block, heading.nextSibling);
+}
+
+function buildIconGrids(main) {
+  [...main.querySelectorAll('h2')]
+    .filter((h) => ICON_GRID_HEADINGS.includes(h.textContent.replace(/\s+/g, ' ').trim()))
+    .forEach((h) => buildOneIconGrid(h));
+}
+
+/**
+ * "Related Products" migrated as a flat run of <h4>title + <p>desc + <p><a>Know
+ * more</a> groups. Wrap them in a `card-catalog`-style grid (reusing its CSS) so
+ * they render as product cards like live.
+ */
+function buildRelatedProducts(main) {
+  const heading = [...main.querySelectorAll('h2')]
+    .find((h) => h.textContent.replace(/\s+/g, ' ').trim() === 'Related Products');
+  if (!heading) return;
+  const parent = heading.parentElement;
+
+  const cards = [];
+  const consumed = [];
+  let cur = null;
+  let node = heading.nextElementSibling;
+  while (node && node.tagName !== 'H2') {
+    const next = node.nextElementSibling;
+    if (node.tagName === 'H4') {
+      cur = { title: node, body: [] };
+      cards.push(cur);
+      consumed.push(node);
+    } else if (cur && (node.textContent.trim() || node.querySelector('a'))) {
+      cur.body.push(node);
+      consumed.push(node);
+    } else {
+      consumed.push(node);
+    }
+    node = next;
+  }
+
+  if (cards.length < 2) return;
+
+  const block = document.createElement('div');
+  block.className = 'card-catalog cards-text-only';
+  cards.forEach((card) => {
+    const row = document.createElement('div');
+    const bodyCell = document.createElement('div');
+    bodyCell.append(card.title.cloneNode(true));
+    const links = [];
+    card.body.forEach((el) => {
+      const clone = el.cloneNode(true);
+      if (el.tagName === 'P' && el.querySelector('a')) links.push(clone);
+      else bodyCell.append(clone);
+    });
+    if (links.length) {
+      const linkRow = document.createElement('div');
+      linkRow.className = 'card-catalog-links';
+      links.forEach((l) => linkRow.append(l));
+      bodyCell.append(linkRow);
+    }
+    row.append(bodyCell);
+    block.append(row);
+  });
+
+  consumed.forEach((el) => el.remove());
+  parent.insertBefore(block, heading.nextSibling);
+}
+
+/**
+ * The current-accounts "One Current Account, many robust offerings" section
+ * migrated as an intro <p> then pairs of <p>icon</p> + <p><strong>Label</strong>
+ * <br>desc</p> (Loans, POS/QR/UPI, Payment & Collection, Trade Forex), plus
+ * leaked icon-next/icon-prev carousel-nav <p>s. Group the pairs into a
+ * `feature-row` block and drop the nav junk.
+ */
+function buildFeatureRow(main) {
+  const heading = [...main.querySelectorAll('h2')]
+    .find((h) => h.textContent.replace(/\s+/g, ' ').trim() === 'One Current Account, many robust offerings');
+  if (!heading) return;
+  const parent = heading.parentElement;
+
+  const isIconP = (el) => el && el.tagName === 'P' && el.querySelector('span.icon, picture, img')
+    && !el.textContent.trim();
+  const isNavJunk = (el) => el && el.tagName === 'P'
+    && [...el.querySelectorAll('span.icon')].every((s) => /icon-(next|prev)/.test(s.className))
+    && el.querySelector('span.icon') && !el.textContent.trim();
+
+  const items = [];
+  const consumed = [];
+  let node = heading.nextElementSibling;
+  // skip the intro paragraph(s) until the first icon paragraph
+  while (node && node.tagName !== 'H2') {
+    let advance = node.nextElementSibling;
+    if (isNavJunk(node)) {
+      consumed.push(node);
+    } else if (isIconP(node)) {
+      const labelP = node.nextElementSibling;
+      if (labelP && labelP.tagName === 'P' && labelP.querySelector('strong')) {
+        items.push({ icon: node, text: labelP });
+        consumed.push(node, labelP);
+        advance = labelP.nextElementSibling;
+      }
+    }
+    node = advance;
+  }
+
+  if (items.length < 2) return;
+
+  const block = document.createElement('div');
+  block.className = 'feature-row';
+  items.forEach((it) => {
+    const row = document.createElement('div');
+    const iconCell = document.createElement('div');
+    const icon = resolveGridIcon(it.icon) || it.icon.querySelector('picture, img');
+    if (icon) iconCell.append(icon.cloneNode ? icon.cloneNode(true) : icon);
+    const textCell = document.createElement('div');
+    while (it.text.firstChild) textCell.append(it.text.firstChild);
+    row.append(iconCell, textCell);
+    block.append(row);
+  });
+
+  consumed.forEach((el) => el.remove());
+  parent.insertBefore(block, heading.nextSibling);
+}
+
+/**
+ * "Fast-track your Business Growth" Special Offerings migrated as a <ul> of
+ * <li><p>icon</p><p><a>label</a></p></li>. Convert it into an `icon-grid` block
+ * so it renders as icon tiles.
+ */
+function buildFastTrackOfferings(main) {
+  const heading = [...main.querySelectorAll('h2')]
+    .find((h) => h.textContent.replace(/\s+/g, ' ').trim() === 'Fast-track your Business Growth with our Banking Solutions');
+  if (!heading) return;
+
+  // the offerings list is the first <ul> after the heading
+  let ul = heading.nextElementSibling;
+  while (ul && ul.tagName !== 'UL' && ul.tagName !== 'H2') ul = ul.nextElementSibling;
+  if (!ul || ul.tagName !== 'UL') return;
+
+  const lis = [...ul.querySelectorAll(':scope > li')];
+  if (lis.length < 2) return;
+
+  const block = document.createElement('div');
+  block.className = 'icon-grid';
+  lis.forEach((li) => {
+    const a = li.querySelector('a[href]');
+    if (!a) return;
+    const row = document.createElement('div');
+    const iconCell = document.createElement('div');
+    const icon = resolveGridIcon(li);
+    if (icon) iconCell.append(icon);
+    const labelCell = document.createElement('div');
+    const p = document.createElement('p');
+    const link = document.createElement('a');
+    link.setAttribute('href', a.getAttribute('href'));
+    link.textContent = a.textContent.replace(/\s+/g, ' ').trim();
+    p.append(link);
+    labelCell.append(p);
+    row.append(iconCell, labelCell);
+    block.append(row);
+  });
+
+  ul.replaceWith(block);
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
@@ -309,6 +583,10 @@ function buildAutoBlocks(main) {
   try {
     buildLinkColumns(main);
     buildCardCatalog(main);
+    buildFeatureRow(main);
+    buildIconGrids(main);
+    buildFastTrackOfferings(main);
+    buildRelatedProducts(main);
     buildFaqAccordion(main);
   } catch (error) {
     // eslint-disable-next-line no-console

@@ -1,0 +1,84 @@
+/* Icon + label tile grid (e.g. current-accounts "Solutions for your Business",
+   "Unlock exciting deals…", account-variant and product-need link grids). */
+
+/* stylelint-disable no-descending-specificity */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 8px 0 24px;
+}
+
+@media (width >= 600px) {
+  .icon-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 900px) {
+  .icon-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.icon-grid .icon-grid-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px;
+  border: 1px solid #e8ebf4;
+  border-radius: 10px;
+  background: var(--background-color, #fff);
+  box-shadow: 0 1px 6px rgb(15 52 100 / 6%);
+  text-align: center;
+  transition: box-shadow 0.2s;
+}
+
+.icon-grid .icon-grid-tile:hover {
+  box-shadow: 0 4px 14px rgb(15 52 100 / 12%);
+}
+
+.icon-grid .icon-grid-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+}
+
+.icon-grid .icon-grid-icon img {
+  max-width: 56px;
+  max-height: 56px;
+  object-fit: contain;
+}
+
+.icon-grid .icon-grid-label {
+  margin: 0;
+}
+
+/* the label is a link; neutralize the global red button pill into plain navy
+   text like the live tiles */
+.icon-grid .icon-grid-label .button-container {
+  margin: 0;
+}
+
+.icon-grid .icon-grid-label a.button:any-link,
+.icon-grid .icon-grid-label a:any-link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--brand-secondary, #003874);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: normal;
+}
+
+.icon-grid .icon-grid-label a:hover {
+  color: var(--brand-primary, #ed4223);
+  text-decoration: underline;
+}

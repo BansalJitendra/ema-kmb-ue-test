@@ -6,7 +6,12 @@ export default function decorate(block) {
   [...block.children].forEach((row) => {
     row.classList.add('card-catalog-card');
     const cells = [...row.children];
-    if (cells[0]) cells[0].classList.add('card-catalog-card-image');
-    if (cells[1]) cells[1].classList.add('card-catalog-card-body');
+    if (cells.length === 1) {
+      // text-only card (e.g. Related Products): no image cell
+      cells[0].classList.add('card-catalog-card-body');
+    } else {
+      if (cells[0]) cells[0].classList.add('card-catalog-card-image');
+      if (cells[1]) cells[1].classList.add('card-catalog-card-body');
+    }
   });
 }

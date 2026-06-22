@@ -1,0 +1,60 @@
+/* Icon + label + description feature row (e.g. current-accounts "One Current
+   Account, many robust offerings"). */
+
+/* stylelint-disable no-descending-specificity */
+.feature-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin: 16px 0 24px;
+}
+
+@media (width >= 600px) {
+  .feature-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 900px) {
+  .feature-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.feature-row .feature-row-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.feature-row .feature-row-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+}
+
+.feature-row .feature-row-icon img {
+  max-width: 64px;
+  max-height: 64px;
+  object-fit: contain;
+}
+
+.feature-row .feature-row-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-color, #333);
+}
+
+.feature-row .feature-row-text strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--brand-secondary, #003874);
+}
