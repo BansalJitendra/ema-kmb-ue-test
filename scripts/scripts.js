@@ -329,6 +329,16 @@ const GRID_ICONS_BY_LABEL = {
   'Taxation & Legal': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/tax.png',
   'Healthcare Solutions': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/healthcare.png',
   'Industry Insights': 'https://www.kotak.bank.in/content/dam/Kotak/png-icons/industry-insights.png',
+  // "Current Accounts for every business need" product tabs (card thumbnails)
+  'Solitaire Business': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/solitaire-business-t.jpg',
+  'Privy+ Business': 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/privy-plus-ca.jpg',
+  'Privy Business': 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/privy-ca.jpg',
+  'Pro Business': 'https://www.kotak.bank.in/content/dam/Kotak/product_card_images/pro-business-tn.jpg',
+  // "Solutions for your Business" tiles
+  Loans: 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/Loans.jpg',
+  'Point of Sale (POS) Machine': 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/Point-of-Sale.jpg',
+  'Trade Forex Solutions': 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/Trade-and-Forex.jpg',
+  'Exclusive Offers for your business': 'https://www.kotak.bank.in/content/dam/Kotak/Product-Card-Images-Mobile/Offers-Beyond-Banking.jpg',
 };
 
 function iconImg(url) {
