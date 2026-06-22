@@ -364,6 +364,9 @@ const ICON_FIX = {
   'zero-balance-account': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Zero_Balance_Account.svg',
   lifestyle: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/lifestyle.svg',
   offer: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/loans/personal-loan/Offer.svg',
+  'sa-choice-option-icon': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/saving-account/sa-choice-option-icon.svg',
+  'sa-needs-option-icon': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/saving-account/sa-needs-option-icon.svg',
+  healthcare: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/Healthcare.svg',
 };
 
 function iconImg(url) {
