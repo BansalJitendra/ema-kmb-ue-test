@@ -52,6 +52,20 @@
   }
 }
 
+/* Banners with baked-in marketing text (e.g. savings-account "0 Balance.
+   Worries." artwork, 1440x400) must show uncropped, so the slide follows the
+   banner's natural aspect ratio instead of the taller 548px hero height — which
+   would zoom/crop the edges and chop the baked-in copy. */
+.carousel-banner .carousel-banner-slide-dark {
+  min-height: 0;
+  aspect-ratio: 1440 / 400;
+  max-height: none;
+}
+
+.carousel-banner .carousel-banner-slide-dark .carousel-banner-slide-image picture > img {
+  object-fit: contain;
+}
+
 .carousel-banner .carousel-banner-slide:has(.carousel-banner-slide-content[data-align='center']) {
   align-items: center;
 }
