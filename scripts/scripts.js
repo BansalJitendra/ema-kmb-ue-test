@@ -559,6 +559,94 @@ function buildExploreVariants(main) {
   parent.insertBefore(block, heading.nextSibling);
 }
 
+/**
+ * The car-loan EMI calculator migrated as static content: an intro marker
+ * ("Calculate your EMI instantly!"), three input labels each followed by a
+ * slider-tick paragraph, and a frozen result block. There's no interactivity.
+ * Replace that static run with an interactive `emi-calculator` block whose
+ * config (min/max/step + defaults) is read from the migrated slider ticks, so
+ * the EMI recomputes live like the source page.
+ */
+function buildEmiCalculator(main) {
+  const marker = [...main.querySelectorAll('p')]
+    .find((p) => /^Calculate your EMI instantly!?$/i.test(p.textContent.trim()));
+  if (!marker) return;
+  const parent = marker.parentElement;
+
+  // Walk from the marker to the result's last value ("Total Amount Payable").
+  // Collect text content for config extraction and mark nodes for removal.
+  const consumed = [marker];
+  let amountText = '';
+  let rateText = '';
+  let tenureText = '';
+  let applyHref = '';
+  let node = marker.nextElementSibling;
+  let stage = 0; // 0 amount, 1 rate, 2 tenure
+  let reachedResult = false;
+  while (node) {
+    const t = node.textContent.replace(/\s+/g, ' ').trim();
+    const next = node.nextElementSibling;
+    if (node.tagName === 'H2' || node.tagName === 'H1' || node.tagName === 'H4') break;
+    consumed.push(node);
+    // Slider-tick paragraphs (image handle + run of numbers).
+    const isTick = node.tagName === 'P' && node.querySelector('img')
+      && /handle\.png/.test(node.querySelector('img').getAttribute('src') || '');
+    if (isTick) {
+      if (stage === 0) {
+        amountText = t;
+        stage = 1;
+      } else if (stage === 1) {
+        rateText = t;
+        stage = 2;
+      } else if (!tenureText) {
+        tenureText = t;
+      }
+    }
+    const a = node.querySelector && node.querySelector('a[href]');
+    if (a && /Apply Now/i.test(a.textContent)) applyHref = a.getAttribute('href') || '';
+    if (/Total Amount Payable/i.test(t)) reachedResult = true;
+    // Stop after the result's total value + its Apply Now button.
+    if (reachedResult && a && /Apply Now/i.test(a.textContent)) break;
+    node = next;
+  }
+  if (!amountText || !rateText) return;
+
+  // Parse slider scales. Amount ticks like "1L26L51L76L100L" → 1L..100L.
+  const lakhs = amountText.match(/(\d+)L/g) || [];
+  const amountScaleMin = lakhs[0] || '1L';
+  const amountScaleMax = lakhs[lakhs.length - 1] || '100L';
+  const toRupees = (l) => parseInt(l, 10) * 100000;
+  const amountMin = toRupees(amountScaleMin);
+  const amountMax = toRupees(amountScaleMax);
+  // Rate ticks "89101112…24" — first is min (8), last two digits are max (24).
+  const rateNums = rateText.replace(/[^0-9]/g, '');
+  const rateMin = Number(rateNums.slice(0, 1)) || 8;
+  const rateMax = Number(rateNums.slice(-2)) || 24;
+
+  const block = document.createElement('div');
+  block.className = 'emi-calculator';
+  block.dataset.amount = '5000000';
+  block.dataset.amountMin = String(amountMin);
+  block.dataset.amountMax = String(amountMax);
+  block.dataset.amountStep = '50000';
+  block.dataset.amountScaleMin = amountScaleMin;
+  block.dataset.amountScaleMax = amountScaleMax;
+  block.dataset.rate = String(rateMin);
+  block.dataset.rateMin = String(rateMin);
+  block.dataset.rateMax = String(rateMax);
+  block.dataset.rateStep = '1';
+  block.dataset.tenure = '5';
+  block.dataset.tenureMin = '1';
+  block.dataset.tenureMax = '7';
+  block.dataset.tenureStep = '1';
+  block.dataset.tenureUnit = 'Years';
+  if (applyHref) block.dataset.applyHref = applyHref;
+
+  consumed.forEach((el) => el.remove());
+  // Insert where the marker was (use the node that followed the result, or end).
+  parent.insertBefore(block, node || null);
+}
+
 // Resolve a tokenized icon (<span class="icon icon-NAME">) or a broken
 // /icons/NAME.svg <img> inside `el` to a real Kotak SVG <img>. Returns the img
 // or null.
@@ -1093,6 +1181,7 @@ function buildAutoBlocks(main) {
     fixTokenizedIcons(main);
     restoreBenefitsCarousel(main);
     buildExploreVariants(main);
+    buildEmiCalculator(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
