@@ -412,10 +412,12 @@ function fixTokenizedIcons(main) {
   });
 }
 
-// The savings-account "Benefits of Kotak Savings Account" carousel imported with
-// its icons but lost the heading and per-slide caption text. Restore them: match
-// each slide by its icon filename and fill the empty content cell, then prepend
-// the section heading the source dropped.
+// The savings-account "Benefits of Kotak Savings Account" section imported as a
+// `carousel-promo` (built for wide banner artwork), but on the live site it's a
+// row of centered icon tiles — a circular icon with the benefit caption below.
+// Each imported slide row is [icon cell][empty cell]; the caption text was lost.
+// Rebuild it as a `feature-row` block (icon + caption tiles) keyed by icon name,
+// and prepend the dropped section heading.
 const BENEFITS_CAPTIONS = {
   'sa-interest-icon': 'Earn FD-like interest in your Savings Account!',
   offer: 'Everyday offers on shopping, dining, travel and more',
@@ -428,25 +430,34 @@ function restoreBenefitsCarousel(main) {
   if (!promo) return;
   const rows = [...promo.querySelectorAll(':scope > div')];
   if (rows.length < 2) return;
-  let filled = 0;
+
+  const items = [];
   rows.forEach((row) => {
-    const cells = [...row.children];
-    if (cells.length < 2) return;
-    const img = cells[0].querySelector('img');
+    const img = row.querySelector('img');
     const src = (img && img.getAttribute('src')) || '';
+    if (!img) return;
     const key = Object.keys(BENEFITS_CAPTIONS)
       .find((k) => new RegExp(k.replace(/-/g, '[-_]?'), 'i').test(src));
-    const contentCell = cells[1];
-    if (key && !contentCell.textContent.trim()) {
-      const p = document.createElement('p');
-      p.textContent = BENEFITS_CAPTIONS[key];
-      contentCell.append(p);
-      filled += 1;
-    }
+    items.push({ img, caption: key ? BENEFITS_CAPTIONS[key] : '' });
   });
-  if (!filled) return;
-  // Prepend the dropped section heading directly above the carousel block (runs
-  // before decorateBlocks, so the block is still `.carousel-promo` in its parent).
+  if (items.length < 2) return;
+
+  // Build a feature-row block: each tile is an icon cell + a caption text cell.
+  const block = document.createElement('div');
+  block.className = 'feature-row feature-row-benefits';
+  items.forEach((it) => {
+    const row = document.createElement('div');
+    const iconCell = document.createElement('div');
+    iconCell.append(it.img.cloneNode(true));
+    const textCell = document.createElement('div');
+    const p = document.createElement('p');
+    p.textContent = it.caption;
+    textCell.append(p);
+    row.append(iconCell, textCell);
+    block.append(row);
+  });
+
+  // Prepend the dropped section heading, then swap the carousel for the tiles.
   const prev = promo.previousElementSibling;
   if (!prev || !/Benefits of Kotak Savings Account/i.test(prev.textContent)) {
     const h2 = document.createElement('h2');
@@ -454,6 +465,7 @@ function restoreBenefitsCarousel(main) {
     h2.textContent = 'Benefits of Kotak Savings Account';
     promo.parentElement.insertBefore(h2, promo);
   }
+  promo.replaceWith(block);
 }
 
 // Resolve a tokenized icon (<span class="icon icon-NAME">) or a broken

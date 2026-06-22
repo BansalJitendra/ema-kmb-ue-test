@@ -65,3 +65,22 @@
   font-weight: 700;
   color: var(--brand-secondary, #003874);
 }
+
+/* "Benefits of Kotak Savings Account" variant — live shows each icon inside a
+   large thin-bordered circle with the caption centered below. */
+.feature-row-benefits .feature-row-icon {
+  width: 150px;
+  height: 150px;
+  border: 1px solid #e2e2e2;
+  border-radius: 50%;
+}
+
+.feature-row-benefits .feature-row-icon img {
+  width: 64px;
+  height: 64px;
+}
+
+.feature-row-benefits .feature-row-text {
+  font-size: 15px;
+  color: var(--text-color, #333);
+}
