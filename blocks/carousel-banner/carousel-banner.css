@@ -84,23 +84,24 @@
   z-index: 1;
   margin: 48px;
   padding: 0;
-  color: #fff;
+  color: var(--text-color);
   background-color: transparent;
   position: relative;
   width: var(--slide-content-width, auto);
 }
 
-/* Kotak dark hero banner — matched to live source: white headline (44px/52px,
-   weight 700), orange-red filled CTA, text directly on the banner image. */
+/* Kotak hero banner — matched to the live source, which overlays dark text on
+   the (light) banner artwork: navy headline (44px/52px, weight 700), dark body
+   copy, and an orange-red filled CTA. */
 .carousel-banner .carousel-banner-slide-content h1,
 .carousel-banner .carousel-banner-slide-content h2 {
-  color: #fff;
+  color: var(--brand-secondary);
   font-weight: 700;
   line-height: 1.2;
 }
 
 .carousel-banner .carousel-banner-slide-content p {
-  color: #fff;
+  color: var(--text-color);
 }
 
 .carousel-banner .carousel-banner-slide-content a:any-link {
