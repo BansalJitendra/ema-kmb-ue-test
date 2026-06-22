@@ -140,6 +140,7 @@ function buildLinkColumns(main) {
 const CARD_CATALOG_HEADINGS = [
   'Types of Debit cards',
   'Solutions built around your business',
+  'Types of Savings Accounts designed to meet your personalised goals',
 ];
 
 /**
@@ -152,7 +153,12 @@ const CARD_CATALOG_HEADINGS = [
  */
 function buildOneCardCatalog(heading) {
   const parent = heading.parentElement;
-  const JUNK = /^(Compare|Add account for comparison|Close Compare.*|×)$/;
+  const JUNK = /^(Compare|Add account for comparison|Close Compare.*|×|Reset|Apply)$/;
+  // Filter UI that precedes the cards on some catalogs (savings-account) — not a
+  // card, just a leaked control row. Skip the "Choose a filter" heading and its
+  // Reset/Apply controls until the first product card image.
+  const isFilterControl = (el) => el.tagName === 'H5'
+    || (el.tagName === 'P' && /^(Reset|Apply)$/.test(el.textContent.replace(/\s+/g, ' ').trim()));
 
   const cards = [];
   const consumed = [];
@@ -162,17 +168,25 @@ function buildOneCardCatalog(heading) {
     const next = node.nextElementSibling;
     const text = node.textContent.replace(/\s+/g, ' ').trim();
     const isImageP = node.tagName === 'P' && node.querySelector('picture, img') && !text;
+    // A new card begins at an image only once the current card already has a CTA
+    // link; otherwise a mid-card image (e.g. the 811 offer badge) stays as body.
+    const curHasCta = cur && cur.body.some((b) => b.querySelector && b.querySelector('a[href]'));
 
     // The next section heading or a modal/disclaimer block ends the catalog.
     if (node.tagName === 'H2' || node.tagName === 'H1') break;
     if (node.tagName === 'P' && /^Disclaimer$/.test(text)) break;
 
-    if (isImageP) {
-      if (!cur || cur.body.length > 0) {
+    if (!cur && isFilterControl(node)) {
+      // Skip leaked filter controls that sit before the first card.
+      consumed.push(node);
+    } else if (isImageP) {
+      if (!cur || curHasCta) {
         cur = { image: node, body: [] };
         cards.push(cur);
+      } else {
+        cur.body.push(node); // mid-card image (offer badge) — keep in body
       }
-      consumed.push(node); // first image kept, extra leading images dropped
+      consumed.push(node);
     } else if (cur) {
       // Drop standalone compare junk and the "<meta> Compare" combined dupe.
       if (node.tagName === 'P' && (JUNK.test(text) || /\bCompare$/.test(text))) {

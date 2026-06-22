@@ -1,83 +1,41 @@
-# Full Site Migration Plan — Kotak Bank (Crosswalk / Universal Editor)
+# Fix Savings-Account Product Cards Grid (render as cards, not a flat list)
 
-## Overview
-Migrate the Kotak Bank website to AEM Edge Delivery Services (Universal Editor / crosswalk project). The migration covers **content, design/styling, navigation, and footer**. Work happens in the current EDS project (confirmed crosswalk project with `component-models.json`, `models/`, and `blocks/`).
+## Problem
+On the **savings-account** page, the product cards under the heading **"Types of Savings Accounts designed to meet your personalised goals"** render as a flat vertical stack of loose paragraphs/images/lists instead of a proper card grid.
 
-**Source site URL:** `https://www.kotak.bank.in/en/home.html`
+**Root cause:** The autoblock builder `buildCardCatalog` in `scripts/scripts.js` only fires for headings listed in `CARD_CATALOG_HEADINGS` (currently just `"Types of Debit cards"` and `"Solutions built around your business"`). The savings-account products heading is **not** in that list, so no `card-catalog` block is built and the content stays as default flat content.
 
-**Project type:** Crosswalk / Universal Editor (confirmed — JCR/XML content, component models present).
+## Source Structure (from rendered DOM)
+Under the "Types of Savings Accounts…" heading, the content is:
+1. A filter UI: an `h5 "Choose a filter"` + `Reset` / `Apply` link paragraphs (NOT cards — must be skipped/removed).
+2. A flat run of **8 product cards**, each made of: two image `<p>`s (thumbnail + logo/offer), a title `<p>` (e.g. "811 Digital Bank Account"), optional meta `<p>`(s), a bullets `<ul>`, and `Open Savings Account` / `Know More` link `<p>`s.
+3. Trailing junk: three `"Add account for comparison"` paragraphs and a `"Close CompareCompare Saving Accounts"` paragraph.
+4. Ends at the next `h2` ("Explore other savings account options…").
 
-## Migration Stages
+## Approach
+Reuse the existing `buildOneCardCatalog` machinery (it already groups loose paragraphs into cards by detecting image `<p>` boundaries, collects body content, and emits a `.card-catalog` block). Two adjustments needed:
 
-### Stage 1 — Scope & Discovery
-- Discover all site URLs (sitemap or crawl) starting from the home page.
-- Analyze pages and group them into page templates (page types).
-- Catalog the blocks/components needed across templates.
-- Produce a migration scope report (templates, block inventory, page counts, effort estimate).
-- **Review checkpoint:** confirm template grouping and block list before building.
+1. **Register the heading** — add `"Types of Savings Accounts designed to meet your personalised goals"` to `CARD_CATALOG_HEADINGS` so `buildCardCatalog` runs on it.
+2. **Skip the filter UI + compare junk** — ensure the builder does not treat the `Choose a filter` / `Reset` / `Apply` controls or the `Add account for comparison` / `Close Compare…` paragraphs as card content. Verify `buildOneCardCatalog`'s existing `JUNK` regex and start logic handle these; extend the junk filter if the filter-UI lines leak into the first card.
 
-### Stage 2 — Site Design System
-- Extract design tokens (colors, typography, spacing) from the source site.
-- Apply global styles to the EDS project (styles, fonts, CSS variables).
+After building, confirm each card shows: image, title, bullets, and the Apply/Know More buttons, laid out as a responsive grid matching the live site.
 
-### Stage 3 — Block Variants & Design
-- For each block variant identified per template, create/style the EDS block to match the original.
-- Visually verify each block against the source.
-
-### Stage 4 — Import Infrastructure
-- Generate page template skeletons (`page-templates.json`).
-- Generate block parsers and page transformers.
-- Build the bundled import script.
-- For crosswalk: validate Universal Editor block models and field hinting (JCR/XML conversion).
-
-### Stage 5 — Content Import
-- Run the import across all discovered URLs (per template).
-- Generate content documents in the project.
-- Verify rendering in preview.
-
-### Stage 6 — Navigation
-- Migrate and instrument the site header/navigation (desktop, mobile, megamenu as applicable — banking sites typically have a large megamenu).
-- Validate nav structure against source screenshots.
-
-### Stage 7 — Footer
-- Migrate and instrument the site footer (desktop, mobile).
-- Validate appearance and behavior against source.
-
-### Stage 8 — Validation & QA
-- Full-site visual critique comparing migrated pages to originals.
-- Fix styling/structure issues iteratively.
-- Validate crosswalk JCR/XML output integrity.
+## Files
+- `scripts/scripts.js` — `CARD_CATALOG_HEADINGS` array (~line 140) and, if needed, the junk-skipping logic inside `buildOneCardCatalog` (~line 153).
+- Possibly `blocks/card-catalog/card-catalog.css` — only if the grid styling needs tweaks for this variant (verify first; do not change preemptively).
 
 ## Checklist
-- [x] **Confirm source site URL** — `https://www.kotak.bank.in/en/home.html`
-- [ ] Discover all URLs via sitemap/crawl
-- [ ] Analyze pages and group into page templates
-- [ ] Catalog required blocks/components
-- [ ] Produce migration scope report
-- [ ] **Review checkpoint:** approve templates & block inventory
-- [ ] Extract design tokens from source
-- [ ] Apply global site design (styles, fonts, tokens)
-- [ ] Create/style block variants per template
-- [ ] Visually verify each block vs. source
-- [ ] Generate page template skeletons (`page-templates.json`)
-- [ ] Generate block parsers and page transformers
-- [ ] Build bundled import script
-- [ ] Validate Universal Editor block models & field hinting
-- [ ] Run content import across all URLs
-- [ ] Verify content rendering in preview
-- [ ] Migrate & instrument navigation (desktop/mobile/megamenu)
-- [ ] Validate navigation structure
-- [ ] Migrate & instrument footer (desktop/mobile)
-- [ ] Validate footer appearance & behavior
-- [ ] Full-site visual critique vs. originals
-- [ ] Fix issues iteratively
-- [ ] Validate crosswalk JCR/XML output integrity
+- [ ] Read `buildOneCardCatalog` / `buildCardCatalog` in `scripts/scripts.js` to confirm the grouping logic fits the savings products structure
+- [ ] Add the "Types of Savings Accounts designed to meet your personalised goals" heading to `CARD_CATALOG_HEADINGS`
+- [ ] Ensure the filter UI (`Choose a filter`, `Reset`, `Apply`) and compare junk (`Add account for comparison`, `Close Compare…`) are excluded from card content
+- [ ] Lint `scripts/scripts.js` (`npx eslint`)
+- [ ] Commit and deploy to `main` (one-shot in-memory GitHub token; never written to disk/config)
+- [ ] Verify on the edge: 8 product cards render as a grid with image + title + bullets + Apply/Know More buttons, no flat list, no leftover filter/compare junk
+- [ ] Confirm no regressions to the already-fixed hero carousel, icons, and Benefits section
 
-## Scope Considerations
-- Kotak Bank is a large banking site — full URL discovery may return hundreds/thousands of pages. After discovery, we'll review the scope report together and decide whether to migrate all templates or prioritize a subset.
-- Banking sites often have complex navigation (megamenu) and rich footers; these stages may require extra validation iterations.
+## Notes
+- This is a continuation of the savings-account polish (hero carousel, broken icons, and Benefits section already fixed and deployed).
+- Reminder: the GitHub token pasted earlier is exposed in the conversation and should be rotated.
 
-## Open Items
-- After Stage 1 scope report, confirm whether to proceed with the full site or a prioritized subset of templates.
-
-> Note: This plan is in Plan mode. Execution (URL discovery, analysis, file generation, import) requires switching to **Execute mode**.
+> This plan is in Plan mode. Applying the code change, deploying, and verifying requires switching to **Execute mode**.
+```
