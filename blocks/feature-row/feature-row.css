@@ -38,9 +38,16 @@
   height: 64px;
 }
 
+/* the icon img is wrapped in a <p> from the source markup — neutralize it so
+   the flex centering and icon sizing apply correctly */
+.feature-row .feature-row-icon p {
+  margin: 0;
+  line-height: 0;
+}
+
 .feature-row .feature-row-icon img {
-  max-width: 64px;
-  max-height: 64px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
 }
 
