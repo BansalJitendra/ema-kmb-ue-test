@@ -1,6 +1,7 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { fetchPlaceholders } from '../../scripts/placeholders.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { stripHtmlExtensions } from '../../scripts/scripts.js';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -265,6 +266,9 @@ export default async function decorate(block) {
   // prevent mobile nav behavior on window resize
   toggleMenu(nav, navSections, isDesktop.matches);
   isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
+
+  // migrated nav links carry .html which 404s on Edge Delivery — strip it
+  stripHtmlExtensions(nav);
 
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';

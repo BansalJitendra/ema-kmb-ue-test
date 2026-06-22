@@ -250,6 +250,47 @@ function buildAutoBlocks(main) {
   }
 }
 
+/**
+ * Internal links migrated from the source site keep a `.html` extension (e.g.
+ * /en/personal-banking/cards/credit-cards.html), but Edge Delivery serves pages
+ * extensionless, so those links 404. Strip `.html` from internal page links
+ * (root-relative or same-origin), preserving query strings and hashes. External
+ * links and asset files (images, PDFs, etc.) are left untouched.
+ */
+export function stripHtmlExtensions(main) {
+  const ASSET = /\.(jpe?g|png|gif|webp|svg|pdf|zip|docx?|xlsx?|pptx?|mp4|mov|json|xml|csv)$/i;
+  main.querySelectorAll('a[href]').forEach((a) => {
+    const href = a.getAttribute('href');
+    if (!href) return;
+
+    // Only internal links: root-relative ("/en/…") or same-origin absolute.
+    let isInternal = href.startsWith('/') && !href.startsWith('//');
+    let url;
+    if (!isInternal && /^https?:\/\//i.test(href)) {
+      try {
+        url = new URL(href);
+        isInternal = url.origin === window.location.origin;
+      } catch (e) {
+        return;
+      }
+    }
+    if (!isInternal) return;
+
+    // Split off query/hash so we only touch the path.
+    const hashIdx = href.indexOf('#');
+    const queryIdx = href.indexOf('?');
+    let cut = href.length;
+    if (queryIdx !== -1) cut = Math.min(cut, queryIdx);
+    if (hashIdx !== -1) cut = Math.min(cut, hashIdx);
+    const path = href.slice(0, cut);
+    const suffix = href.slice(cut);
+
+    if (/\.html$/i.test(path) && !ASSET.test(path)) {
+      a.setAttribute('href', path.replace(/\.html$/i, '') + suffix);
+    }
+  });
+}
+
 function a11yLinks(main) {
   const links = main.querySelectorAll('a');
   links.forEach((link) => {
@@ -271,6 +312,8 @@ export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateIcons(main);
+  // migrated internal links carry .html which 404s on Edge Delivery — strip it
+  stripHtmlExtensions(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);

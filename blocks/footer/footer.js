@@ -1,5 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { stripHtmlExtensions } from '../../scripts/scripts.js';
 
 /**
  * loads and decorates the footer
@@ -16,6 +17,9 @@ export default async function decorate(block) {
   block.textContent = '';
   const footer = document.createElement('div');
   while (fragment.firstElementChild) footer.append(fragment.firstElementChild);
+
+  // migrated footer links carry .html which 404s on Edge Delivery — strip it
+  stripHtmlExtensions(footer);
 
   block.append(footer);
 }
