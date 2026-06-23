@@ -1145,6 +1145,34 @@ function tagCreditCardProducts(main) {
 }
 
 /**
+ * The credit-cards "Credit Cards that everyone is talking about" testimonials
+ * show a 5-star rating per review. Live renders the stars with Font Awesome
+ * (<i class="fa fa-star">), which EDS doesn't ship, so the migrated content kept
+ * only an empty <ul><li></li></ul> placeholder per card. Fill each empty rating
+ * list item with five star glyphs and tag the block so the CSS can gild them.
+ */
+function buildReviewStars(main) {
+  const heading = [...main.querySelectorAll('h1, h2, h3, h4')]
+    .find((h) => /everyone is talking about/i.test(h.textContent));
+  if (!heading) return;
+  let block = heading.nextElementSibling;
+  while (block && !block.classList.contains('cards-feature')) {
+    block = block.nextElementSibling;
+  }
+  if (!block) return;
+  block.classList.add('cards-feature-reviews');
+
+  block.querySelectorAll('ul > li').forEach((li) => {
+    if (li.textContent.trim() || li.querySelector('*')) return;
+    const stars = document.createElement('span');
+    stars.className = 'review-stars';
+    stars.setAttribute('aria-label', '5 star rating');
+    stars.textContent = '★★★★★';
+    li.append(stars);
+  });
+}
+
+/**
  * The credit-cards "Get an instant Credit Card in just 3 easy steps!" section
  * migrated as a flat run of (icon <p>) + (step-title <h4>) + (description <p>)
  * triples. Live renders these as three equal columns. Group each triple into a
@@ -1366,6 +1394,7 @@ function buildAutoBlocks(main) {
     buildFeatureRow(main);
     buildCreditCardSteps(main);
     tagCreditCardProducts(main);
+    buildReviewStars(main);
     buildIconGrids(main);
     buildFastTrackOfferings(main);
     buildRelatedProducts(main);

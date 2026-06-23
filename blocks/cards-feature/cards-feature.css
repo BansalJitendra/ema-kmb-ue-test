@@ -285,3 +285,18 @@
   color: var(--brand-primary);
   text-decoration: underline;
 }
+
+/* ── Reviews variant ("Credit Cards that everyone is talking about") ─────────
+   Testimonial cards with a 5-star rating. The rating list is injected client-
+   side (buildReviewStars); style the star glyphs gold like the live page. */
+.cards-feature-reviews .cards-feature-card-body ul {
+  list-style: none;
+  margin: 4px 0 10px;
+  padding: 0;
+}
+
+.cards-feature-reviews .review-stars {
+  color: #fabb00;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
