@@ -411,6 +411,9 @@ const ICON_FIX = {
   apply: 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/apply.svg',
   'icn-protect-ride': 'https://www.kotak.bank.in/content/dam/Kotak/Insurance/icn-protect-ride.svg',
   'buy-a-car-for-whitebg': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/retail-journey/Buy-a-Car-for-whitebg.svg',
+  'cc-step-1': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/cc-step-1.svg',
+  'cc-step-2': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/cc-step-2.svg',
+  'cc-step-3': 'https://www.kotak.bank.in/content/dam/Kotak/svg-icons/cc-step-3.svg',
 };
 
 function iconImg(url) {
