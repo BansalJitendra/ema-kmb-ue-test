@@ -92,4 +92,32 @@ export default function decorate(block) {
   });
   block.textContent = '';
   block.append(ul);
+
+  // Carousel variant (e.g. credit-cards "Credit Card offers you don't want to
+  // miss!"): show the cards in a horizontally scrollable track with prev/next
+  // controls, like the live owl-carousel.
+  if (block.classList.contains('cards-feature-carousel')) {
+    ul.classList.add('cards-feature-track');
+    const nav = document.createElement('div');
+    nav.className = 'cards-feature-nav';
+    const prev = document.createElement('button');
+    prev.type = 'button';
+    prev.className = 'cards-feature-prev';
+    prev.setAttribute('aria-label', 'Previous offers');
+    const next = document.createElement('button');
+    next.type = 'button';
+    next.className = 'cards-feature-next';
+    next.setAttribute('aria-label', 'Next offers');
+    nav.append(prev, next);
+    block.append(nav);
+
+    const scrollByCards = (dir) => {
+      const card = ul.querySelector('li');
+      if (!card) return;
+      const gap = parseFloat(getComputedStyle(ul).columnGap || '0') || 0;
+      ul.scrollBy({ left: dir * (card.getBoundingClientRect().width + gap), behavior: 'smooth' });
+    };
+    prev.addEventListener('click', () => scrollByCards(-1));
+    next.addEventListener('click', () => scrollByCards(1));
+  }
 }

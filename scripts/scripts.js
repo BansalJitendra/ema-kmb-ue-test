@@ -1173,6 +1173,24 @@ function buildReviewStars(main) {
 }
 
 /**
+ * The credit-cards "Credit Card offers you don't want to miss!" section is a
+ * clickable carousel on the live site (offer thumbnails shown a few at a time
+ * with prev/next controls). It migrated as a static `cards-feature` grid. Tag
+ * that block with a `cards-feature-carousel` variant so cards-feature.js turns
+ * it into a horizontally scrollable carousel.
+ */
+function tagCreditCardOffers(main) {
+  const heading = [...main.querySelectorAll('h1, h2, h3, h4')]
+    .find((h) => /Credit Card offers you don.?t want to miss/i.test(h.textContent));
+  if (!heading) return;
+  let node = heading.nextElementSibling;
+  while (node && !node.classList.contains('cards-feature')) {
+    node = node.nextElementSibling;
+  }
+  if (node) node.classList.add('cards-feature-carousel');
+}
+
+/**
  * The credit-cards "Get an instant Credit Card in just 3 easy steps!" section
  * migrated as a flat run of (icon <p>) + (step-title <h4>) + (description <p>)
  * triples. Live renders these as three equal columns. Group each triple into a
@@ -1395,6 +1413,7 @@ function buildAutoBlocks(main) {
     buildCreditCardSteps(main);
     tagCreditCardProducts(main);
     buildReviewStars(main);
+    tagCreditCardOffers(main);
     buildIconGrids(main);
     buildFastTrackOfferings(main);
     buildRelatedProducts(main);

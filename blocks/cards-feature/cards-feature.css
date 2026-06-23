@@ -300,3 +300,92 @@
   font-size: 18px;
   letter-spacing: 2px;
 }
+
+/* ── Carousel variant ("Credit Card offers you don't want to miss!") ─────────
+   Horizontally scrollable track showing ~3 cards per view with prev/next
+   controls, matching the live owl-carousel. */
+.cards-feature-carousel {
+  position: relative;
+}
+
+.cards-feature-carousel > ul.cards-feature-track {
+  display: flex;
+  grid-template-columns: none;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+
+.cards-feature-carousel > ul.cards-feature-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* show all cards in the track (override the 6-card cap used for static grids) */
+.cards-feature-carousel > ul.cards-feature-track > li:nth-child(n+7) {
+  display: flex;
+}
+
+.cards-feature-carousel > ul.cards-feature-track > li {
+  flex: 0 0 calc((100% - 48px) / 3);
+  scroll-snap-align: start;
+}
+
+@media (width < 900px) {
+  .cards-feature-carousel > ul.cards-feature-track > li {
+    flex-basis: calc((100% - 24px) / 2);
+  }
+}
+
+@media (width < 600px) {
+  .cards-feature-carousel > ul.cards-feature-track > li {
+    flex-basis: 80%;
+  }
+}
+
+.cards-feature-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.cards-feature-nav button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--brand-secondary, #003874);
+  border-radius: 50%;
+  background: var(--background-color, #fff);
+  cursor: pointer;
+  position: relative;
+}
+
+.cards-feature-nav button:hover {
+  background: var(--brand-secondary, #003874);
+}
+
+.cards-feature-nav button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--brand-secondary, #003874);
+  border-bottom: 0;
+  border-left: 0;
+}
+
+.cards-feature-nav button:hover::after {
+  border-color: #fff;
+}
+
+.cards-feature-nav .cards-feature-prev::after {
+  transform: translate(-30%, -50%) rotate(-135deg);
+}
+
+.cards-feature-nav .cards-feature-next::after {
+  transform: translate(-70%, -50%) rotate(45deg);
+}
