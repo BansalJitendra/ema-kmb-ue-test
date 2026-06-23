@@ -1196,19 +1196,54 @@ const HOME_VIDEO_THUMB = 'https://www.kotak.bank.in/content/dam/Kotak/video-thum
 const HOME_VIDEO_HREF = 'https://www.youtube.com/embed/t7ZU1dCVpWU?autoplay=1';
 const HAUSLA_IMAGE = 'https://www.kotak.bank.in/content/dam/Kotak/feature-cards/housla-hai-to-ho-jayega_girl-image.jpg';
 
+// Open a YouTube embed in a centered lightbox overlay (like the live fancybox
+// popup) instead of navigating away. Closes on backdrop click, the × button or
+// Escape.
+function openVideoModal(src) {
+  const overlay = document.createElement('div');
+  overlay.className = 'video-modal';
+  overlay.innerHTML = `
+    <div class="video-modal-inner">
+      <button type="button" class="video-modal-close" aria-label="Close video">&times;</button>
+      <div class="video-modal-frame">
+        <iframe src="${src}" title="Video" allow="autoplay; encrypted-media; fullscreen"
+          allowfullscreen></iframe>
+      </div>
+    </div>`;
+  let onKey;
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener('keydown', onKey);
+  };
+  onKey = (e) => {
+    if (e.key === 'Escape') close();
+  };
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close();
+  });
+  overlay.querySelector('.video-modal-close').addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  document.body.append(overlay);
+}
+
 function restoreHomeVideoCards(main) {
   if (!/\/home(\/|$)/.test(window.location.pathname)) return;
   const block = [...main.querySelectorAll('.cards-feature')]
     .find((b) => /Hausla hai toh ho jayega/i.test(b.textContent));
   if (!block) return;
 
+  // Live shows the video tile at 2/3 width next to the 1/3-width Hausla tile.
+  block.classList.add('cards-feature-video');
+
   const cards = [...block.children];
-  // First card is the empty video tile: fill it with the thumbnail + YouTube link.
+  // First card is the empty video tile: fill it with the thumbnail + a play
+  // overlay that opens the YouTube video in a popup.
   const videoCard = cards[0];
   if (videoCard && !videoCard.querySelector('img, picture')) {
     const cell = videoCard.querySelector('div:last-child') || videoCard;
     const link = document.createElement('a');
     link.href = HOME_VIDEO_HREF;
+    link.className = 'home-video-link';
     link.setAttribute('aria-label', 'Play video');
     const picture = document.createElement('picture');
     const img = document.createElement('img');
@@ -1216,7 +1251,14 @@ function restoreHomeVideoCards(main) {
     img.alt = 'Watch video';
     img.loading = 'lazy';
     picture.append(img);
-    link.append(picture);
+    const play = document.createElement('span');
+    play.className = 'home-video-play';
+    play.setAttribute('aria-hidden', 'true');
+    link.append(picture, play);
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      openVideoModal(HOME_VIDEO_HREF);
+    });
     cell.textContent = '';
     cell.append(link);
   }

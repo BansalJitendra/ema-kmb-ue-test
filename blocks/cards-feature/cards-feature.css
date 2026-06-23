@@ -102,6 +102,104 @@
   text-decoration: underline;
 }
 
+/* ── Video variant (home page: wide video tile + Hausla story tile) ──────────
+   Live lays these out as a 2/3-width video next to a 1/3-width story card. */
+.cards-feature-video > ul {
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 768px) {
+  .cards-feature-video > ul {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* the video tile's image fills its (wider) cell at the live 690x340 ratio */
+.cards-feature-video > ul > li:first-child img {
+  aspect-ratio: 690 / 340;
+}
+
+/* play button overlay on the video thumbnail */
+.cards-feature-video .home-video-link {
+  position: relative;
+  display: block;
+  line-height: 0;
+}
+
+.cards-feature-video .home-video-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 68px;
+  height: 48px;
+  transform: translate(-50%, -50%);
+  border-radius: 12px;
+  background: rgb(0 0 0 / 65%);
+  transition: background-color 0.2s;
+}
+
+.cards-feature-video .home-video-link:hover .home-video-play {
+  background: var(--brand-primary, #ed4223);
+}
+
+.cards-feature-video .home-video-play::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-40%, -50%);
+  border-style: solid;
+  border-width: 11px 0 11px 18px;
+  border-color: transparent transparent transparent #fff;
+}
+
+/* ── Lightbox popup for the home video (matches live fancybox behavior) ───── */
+.video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 80%);
+}
+
+.video-modal-inner {
+  position: relative;
+  width: min(900px, 100%);
+}
+
+.video-modal-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.video-modal-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 /* ── Offers variant ("Credit Card offers you don't want to miss!") ───────────
    Imageless offer tiles: a small category label, bold title, description and a
    validity line. No image slot, so the card content fills the tile from the
