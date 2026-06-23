@@ -1186,6 +1186,57 @@ function removeLeakedModal(main) {
 }
 
 /**
+ * The home page renders two live "video section" tiles side by side — a YouTube
+ * video card and the "Hausla hai toh ho jayega" story card — which migrated into
+ * a single `cards-feature` block that lost both images. Restore them: inject the
+ * video thumbnail (wrapped in the YouTube link) into the empty first card and the
+ * Hausla artwork into the Hausla card. Scoped to the home page.
+ */
+const HOME_VIDEO_THUMB = 'https://www.kotak.bank.in/content/dam/Kotak/video-thumbnails/homepage-yt-t-690x340.jpg';
+const HOME_VIDEO_HREF = 'https://www.youtube.com/embed/t7ZU1dCVpWU?autoplay=1';
+const HAUSLA_IMAGE = 'https://www.kotak.bank.in/content/dam/Kotak/feature-cards/housla-hai-to-ho-jayega_girl-image.jpg';
+
+function restoreHomeVideoCards(main) {
+  if (!/\/home(\/|$)/.test(window.location.pathname)) return;
+  const block = [...main.querySelectorAll('.cards-feature')]
+    .find((b) => /Hausla hai toh ho jayega/i.test(b.textContent));
+  if (!block) return;
+
+  const cards = [...block.children];
+  // First card is the empty video tile: fill it with the thumbnail + YouTube link.
+  const videoCard = cards[0];
+  if (videoCard && !videoCard.querySelector('img, picture')) {
+    const cell = videoCard.querySelector('div:last-child') || videoCard;
+    const link = document.createElement('a');
+    link.href = HOME_VIDEO_HREF;
+    link.setAttribute('aria-label', 'Play video');
+    const picture = document.createElement('picture');
+    const img = document.createElement('img');
+    img.src = HOME_VIDEO_THUMB;
+    img.alt = 'Watch video';
+    img.loading = 'lazy';
+    picture.append(img);
+    link.append(picture);
+    cell.textContent = '';
+    cell.append(link);
+  }
+
+  // Hausla card: prepend its artwork into a fresh image cell.
+  const hauslaCard = cards.find((c) => /Hausla hai toh ho jayega/i.test(c.textContent));
+  if (hauslaCard && !hauslaCard.querySelector('img, picture')) {
+    const cell = document.createElement('div');
+    const picture = document.createElement('picture');
+    const img = document.createElement('img');
+    img.src = HAUSLA_IMAGE;
+    img.alt = 'Hausla hai toh ho jayega';
+    img.loading = 'lazy';
+    picture.append(img);
+    cell.append(picture);
+    hauslaCard.insertBefore(cell, hauslaCard.firstChild);
+  }
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -1205,6 +1256,7 @@ function buildAutoBlocks(main) {
     restoreBenefitsCarousel(main);
     buildExploreVariants(main);
     buildEmiCalculator(main);
+    restoreHomeVideoCards(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
