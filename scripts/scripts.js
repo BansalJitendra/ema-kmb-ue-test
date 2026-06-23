@@ -1127,6 +1127,24 @@ function buildFeatureRow(main) {
 }
 
 /**
+ * The credit-cards "Get the Best Credit Cards that we have to offer" section is
+ * a row of product-thumbnail cards (image + card-name link). Live renders them
+ * as a borderless 4-up row with rounded, shadowed thumbnails — not the default
+ * bordered card-feature tiles. Tag that specific block with a `cards-feature-
+ * products` variant class so the CSS can match the live layout.
+ */
+function tagCreditCardProducts(main) {
+  const heading = [...main.querySelectorAll('h1, h2, h3, h4')]
+    .find((h) => /Get the Best Credit Cards that we have to offer/i.test(h.textContent));
+  if (!heading) return;
+  let node = heading.nextElementSibling;
+  while (node && !node.classList.contains('cards-feature')) {
+    node = node.nextElementSibling;
+  }
+  if (node) node.classList.add('cards-feature-products');
+}
+
+/**
  * The credit-cards "Get an instant Credit Card in just 3 easy steps!" section
  * migrated as a flat run of (icon <p>) + (step-title <h4>) + (description <p>)
  * triples. Live renders these as three equal columns. Group each triple into a
@@ -1347,6 +1365,7 @@ function buildAutoBlocks(main) {
     buildCardCatalog(main);
     buildFeatureRow(main);
     buildCreditCardSteps(main);
+    tagCreditCardProducts(main);
     buildIconGrids(main);
     buildFastTrackOfferings(main);
     buildRelatedProducts(main);

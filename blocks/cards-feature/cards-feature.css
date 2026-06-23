@@ -246,3 +246,42 @@
   color: #777;
   font-size: 12.5px;
 }
+
+/* ── Products variant ("Get the Best Credit Cards that we have to offer") ─────
+   Live renders these as a borderless 4-up row of product thumbnails: rounded,
+   shadowed card image with the card name as a plain link below — no tile box. */
+@media (width >= 768px) {
+  .cards-feature-products > ul {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.cards-feature-products > ul > li {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.cards-feature-products > ul > li img {
+  aspect-ratio: 360 / 216;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 10px rgb(15 52 100 / 12%);
+}
+
+.cards-feature-products .cards-feature-card-body {
+  margin: 12px 0 0;
+}
+
+.cards-feature-products .cards-feature-card-body a:any-link {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--brand-secondary);
+}
+
+.cards-feature-products .cards-feature-card-body a:hover {
+  color: var(--brand-primary);
+  text-decoration: underline;
+}
