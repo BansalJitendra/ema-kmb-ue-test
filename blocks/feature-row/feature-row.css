@@ -66,6 +66,39 @@
   color: var(--brand-secondary, #003874);
 }
 
+/* "Get an instant Credit Card in just 3 easy steps!" variant — three equal
+   columns like live, each an icon above a step title + description. */
+@media (width >= 768px) {
+  .feature-row-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.feature-row-steps .feature-row-icon {
+  width: 72px;
+  height: 72px;
+}
+
+.feature-row-steps .feature-row-icon img {
+  width: 72px;
+  height: 72px;
+}
+
+.feature-row-steps .feature-row-item h3,
+.feature-row-steps .feature-row-item h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--brand-secondary, #003874);
+}
+
+.feature-row-steps .feature-row-item p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-color, #555);
+}
+
 /* "Benefits of Kotak Savings Account" variant — live shows each icon inside a
    large thin-bordered circle with the caption centered below. */
 .feature-row-benefits .feature-row-icon {

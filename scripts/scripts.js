@@ -1127,6 +1127,61 @@ function buildFeatureRow(main) {
 }
 
 /**
+ * The credit-cards "Get an instant Credit Card in just 3 easy steps!" section
+ * migrated as a flat run of (icon <p>) + (step-title <h4>) + (description <p>)
+ * triples. Live renders these as three equal columns. Group each triple into a
+ * `feature-row feature-row-steps` row (icon cell + text cell) so it renders as a
+ * 3-up grid.
+ */
+function buildCreditCardSteps(main) {
+  const heading = [...main.querySelectorAll('h1, h2, h3, h4, h5')]
+    .find((h) => /Get an instant Credit Card in just 3 easy steps/i.test(h.textContent));
+  if (!heading) return;
+  const parent = heading.parentElement;
+
+  const isIconP = (el) => el && el.tagName === 'P'
+    && el.querySelector('span.icon, picture, img') && !el.textContent.trim();
+
+  const items = [];
+  const consumed = [];
+  let node = heading.nextElementSibling;
+  while (node && !/^H[12]$/.test(node.tagName)) {
+    let advance = node.nextElementSibling;
+    const titleEl = node.nextElementSibling;
+    const descEl = titleEl && titleEl.nextElementSibling;
+    if (isIconP(node) && titleEl && /^H[3-6]$/.test(titleEl.tagName)) {
+      const text = document.createElement('div');
+      text.append(titleEl.cloneNode(true));
+      consumed.push(node, titleEl);
+      advance = titleEl.nextElementSibling;
+      if (descEl && descEl.tagName === 'P' && descEl.textContent.trim()) {
+        text.append(descEl.cloneNode(true));
+        consumed.push(descEl);
+        advance = descEl.nextElementSibling;
+      }
+      items.push({ icon: node, text });
+    }
+    node = advance;
+  }
+
+  if (items.length < 2) return;
+
+  const block = document.createElement('div');
+  block.className = 'feature-row feature-row-steps';
+  items.forEach((it) => {
+    const row = document.createElement('div');
+    const iconCell = document.createElement('div');
+    const icon = resolveGridIcon(it.icon) || it.icon.querySelector('picture, img');
+    if (icon) iconCell.append(icon.cloneNode ? icon.cloneNode(true) : icon);
+    row.append(iconCell, it.text);
+    block.append(row);
+  });
+
+  consumed.forEach((el) => el.remove());
+  parent.insertBefore(block, heading.nextSibling);
+}
+
+/**
  * "Fast-track your Business Growth" Special Offerings migrated as a <ul> of
  * <li><p>icon</p><p><a>label</a></p></li>. Convert it into an `icon-grid` block
  * so it renders as icon tiles.
@@ -1291,6 +1346,7 @@ function buildAutoBlocks(main) {
     buildLinkColumns(main);
     buildCardCatalog(main);
     buildFeatureRow(main);
+    buildCreditCardSteps(main);
     buildIconGrids(main);
     buildFastTrackOfferings(main);
     buildRelatedProducts(main);
